@@ -23,29 +23,28 @@
     </header>
 
     <main>
-        <section>
+        <section class="form-section">
             <h2>Event Creation Form</h2>
 
             <form action="/create/submit-event" method="POST">
-                <label>
-                    Host Name:
+                <div class="form-field-normal">
+                    <label>Host Name:</label>
                     <input type="text" name="host_name" required>
-                </label>
-                <br><br>
+                </div>
 
-                <label>
-                    Host Email:
+                <div class="form-field-normal">
+                    <label>Host Email:</label>
                     <input type="email" name="email" required>
-                </label>
-                <br><br>
+                </div>
 
-                <label>
-                    Event Name:
+                <div class="form-field-normal">
+                    <label>Event Name:</label>
                     <input type="text" name="event_name" required>
-                </label>
-                <br><br>
-
-                <button type="submit">Submit</button>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit">Submit</button>
+                </div>
             </form>
         </section>
     </main>

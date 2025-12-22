@@ -26,8 +26,8 @@ main {
     background-color: #ffffff;
     padding: 10px;
     width: 80%;
-    text-align: center;
     margin: 0 auto;
+    text-align: center;
 }
 
 footer {
@@ -84,4 +84,31 @@ ul, ol {
 
 .search-events input {
     width: 50%;
+}
+
+.form-section {
+    width: 600px; 
+    margin: 0 auto;
+}
+
+.form-field-normal {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.form-field-normal label {
+    text-align: right;
+    width: 120px; 
+    margin-right: 10px; 
+}
+
+.form-field-normal input {
+    flex: 1;   
+    padding: 5px;
+}
+
+.form-actions {
+    text-align: center;
+    margin-top: 30px;
 }
