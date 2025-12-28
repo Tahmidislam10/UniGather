@@ -9,7 +9,7 @@ def create_app():
     app.config.from_object(Config)
 
     jwt.init_app(app)
-    init_mongo(app)
+    #init_mongo(app)
 
     from .routes.auth import bp as auth_bp
     from .routes.events import bp as events_bp

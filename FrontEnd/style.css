@@ -1,0 +1,114 @@
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    padding: 0;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    background-color: #d61726;
+    color: #ffffff;
+    padding: 15px;
+
+    /* Experiment with this */
+    position: sticky;
+    top: 0;
+}
+
+main {
+    flex: 1;
+    background-color: #ffffff;
+    padding: 10px;
+    width: 80%;
+    margin: 0 auto;
+    text-align: center;
+}
+
+footer {
+    background-color: #1e1e1e;
+    color: #ffffff;
+    padding: 5px;
+}
+
+ul, ol {
+    list-style-position: inside;
+    padding-left: 0;
+}
+
+.header-nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 25px;
+    margin-bottom: 5px;
+    gap: 10px;
+}
+
+.header-nav a {
+    color: #ffffff;
+    font-weight: bold;
+    padding: 10px 15px;
+    border-radius: 8px;
+}
+
+.header-nav a.active {
+    background-color: #1e1e1e;
+    color: #ffffff;
+}
+
+.header-nav a:hover {
+    background-color: #ffffff36;
+}
+
+.button {
+    background-color: #999999;
+    color: #000000;
+    text-decoration: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+}
+
+.button:hover {
+    background-color: #1e1e1e;
+    color: #ffffff;
+}
+
+.search-events input {
+    width: 50%;
+}
+
+.form-section {
+    width: 600px; 
+    margin: 0 auto;
+}
+
+.form-field-normal {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.form-field-normal label {
+    text-align: right;
+    width: 120px; 
+    margin-right: 10px; 
+}
+
+.form-field-normal input {
+    flex: 1;   
+    padding: 5px;
+}
+
+.form-actions {
+    text-align: center;
+    margin-top: 30px;
+}
