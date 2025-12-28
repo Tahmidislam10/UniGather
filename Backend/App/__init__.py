@@ -2,6 +2,8 @@ from flask import Flask, jsonify
 from .config import Config
 from .extensions import jwt, init_mongo
 
+
+
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
