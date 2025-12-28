@@ -27,16 +27,15 @@
             <br>
             <a href="create.html" class="button">Create event</a>
 
-            <br><br>
-            <form action="/search" method="GET" class="search-events">
+            <div class="search-events">
                 <input 
                     type="search" 
+                    id="searchInput" 
                     name="title" 
                     placeholder="Search for an event title..." 
-                    required
                 >
-                <button type="submit">Search</button>
-            </form>
+                <button type="button" id="searchBtn">Search</button>
+            </div>
         </section>
     </main>
 

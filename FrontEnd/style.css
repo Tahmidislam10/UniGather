@@ -82,6 +82,10 @@ ul, ol {
     color: #ffffff;
 }
 
+.search-events {
+    margin-top: 30px; 
+}
+
 .search-events input {
     width: 50%;
 }
