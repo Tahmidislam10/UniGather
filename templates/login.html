@@ -23,8 +23,24 @@
     </header>
 
     <main>
-        <section>
+        <section class="form-section">
             <!-- Login / Register form will go here -->
+
+            <form action="/create/submit-event" method="POST">
+                <div class="form-field-normal">
+                    <label>Username:</label>
+                    <input type="text" name="username" required>
+                </div>
+
+                <div class="form-field-normal">
+                    <label>Password:</label>
+                    <input type="text" name="password" required>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit">Submit</button>
+                </div>
+            </form>
         </section>
     </main>
 
