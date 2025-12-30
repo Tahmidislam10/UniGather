@@ -1,83 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Events</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/style.css">
-</head>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Events</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="/static/style.css" />
+    </head>
 
-<body>
+    <body>
+        <header>
+            <h1>UniGather</h1>
+            <p>All events</p>
 
-<header>
-    <h1>UniGather</h1>
-    <p>All events</p>
+            <nav>
+                <ul class="header-nav">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/about">About Us</a></li>
+                    <li><a href="/events-page" class="active">Events</a></li>
+                    <li><a href="/login">Login / Register</a></li>
+                </ul>
+            </nav>
+        </header>
 
-    <nav>
-        <ul class="header-nav">
-            <li><a href="/">Home</a></li>
-            <li><a href="/about">About Us</a></li>
-            <li><a href="/events-page" class="active">Events</a></li>
-            <li><a href="/login">Login / Register</a></li>
-        </ul>
-    </nav>
-</header>
+        <main>
+            <section>
+                <br />
+                <a href="/create" class="button">Create event</a>
 
-<main>
-    <section>
-        <br>
-        <a href="/create" class="button">Create event</a>
+                <br /><br />
+                <form class="search-events">
+                    <input
+                        type="search"
+                        placeholder="Search for an event title..."
+                    />
+                    <button type="submit">Search</button>
+                </form>
+            </section>
 
-        <br><br>
-        <form class="search-events">
-            <input
-                type="search"
-                placeholder="Search for an event title..."
-            >
-            <button type="submit">Search</button>
-        </form>
-    </section>
+            <!-- EVENTS RENDER HERE -->
+            <section id="events-list"></section>
+        </main>
 
-    <!-- EVENTS RENDER HERE -->
-    <section id="events-list"></section>
-</main>
+        <footer>
+            <h2>IN3046 Cloud Computing - Coursework Project</h2>
+        </footer>
 
-<footer>
-    <h2>IN3046 Cloud Computing - Coursework Project</h2>
-</footer>
+        <script>
+            async function loadEvents() {
+                try {
+                    const res = await fetch("/events");
+                    const events = await res.json();
 
-<script>
-async function loadEvents() {
-    try {
-        const res = await fetch("/events");
-        const events = await res.json();
+                    const container = document.getElementById("events-list");
+                    container.innerHTML = "";
 
-        const container = document.getElementById("events-list");
-        container.innerHTML = "";
+                    if (events.length === 0) {
+                        container.innerHTML = "<p>No events available.</p>";
+                        return;
+                    }
 
-        if (events.length === 0) {
-            container.innerHTML = "<p>No events available.</p>";
-            return;
-        }
+                    events.forEach((event) => {
+                        const div = document.createElement("div");
+                        div.className = "event-card";
+                        div.innerHTML = `
+                    <h3>${event.event_name}</h3>
+                    <p><strong>Host:</strong> ${event.host_name}</p>
+                    <p><strong>Email:</strong> ${event.email}</p>
+                    <p><strong>Created:</strong> ${new Date(
+                        event.created_at
+                    ).toLocaleString()}</p>
+                `;
+                        container.appendChild(div);
+                    });
+                } catch (err) {
+                    console.error(err);
+                }
+            }
 
-        events.forEach(event => {
-            const div = document.createElement("div");
-            div.className = "event-card";
-            div.innerHTML = `
-                <h3>${event.event_name}</h3>
-                <p><strong>Host:</strong> ${event.host_name}</p>
-                <p><strong>Email:</strong> ${event.email}</p>
-                <p><strong>Created:</strong> ${new Date(event.created_at).toLocaleString()}</p>
-            `;
-            container.appendChild(div);
-        });
-    } catch (err) {
-        console.error(err);
-    }
-}
-
-loadEvents();
-</script>
-
-</body>
+            loadEvents();
+        </script>
+    </body>
 </html>

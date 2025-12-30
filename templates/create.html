@@ -1,57 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Create event</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/style.css">
-</head>
-<body>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Create event</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="/static/style.css" />
+    </head>
+    <body>
+        <header>
+            <h1>UniGather</h1>
+            <p>Create an event</p>
 
-    <header>
-        <h1>UniGather</h1>
-        <p>Create an event</p>
+            <nav>
+                <ul class="header-nav">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/about">About Us</a></li>
+                    <li><a href="/events-page">Events</a></li>
+                    <li><a href="/login">Login / Register</a></li>
+                </ul>
+            </nav>
+        </header>
 
-        <nav>
-            <ul class="header-nav">
-                <li><a href="/">Home</a></li>
-                <li><a href="/about">About Us</a></li>
-                <li><a href="/events-page">Events</a></li>
-                <li><a href="/login">Login / Register</a></li>
-            </ul>
-        </nav>
-    </header>
+        <main>
+            <section class="form-section">
+                <h2>Event Creation Form</h2>
 
-    <main>
-        <section class="form-section">
-            <h2>Event Creation Form</h2>
+                <form action="/create/submit-event" method="POST">
+                    <div class="form-field-normal">
+                        <label>Host Name:</label>
+                        <input type="text" name="host_name" required />
+                    </div>
 
-            <form action="/create/submit-event" method="POST">
-                <div class="form-field-normal">
-                    <label>Host Name:</label>
-                    <input type="text" name="host_name" required>
-                </div>
+                    <div class="form-field-normal">
+                        <label>Host Email:</label>
+                        <input type="email" name="email" required />
+                    </div>
 
-                <div class="form-field-normal">
-                    <label>Host Email:</label>
-                    <input type="email" name="email" required>
-                </div>
+                    <div class="form-field-normal">
+                        <label>Event Name:</label>
+                        <input type="text" name="event_name" required />
+                    </div>
 
-                <div class="form-field-normal">
-                    <label>Event Name:</label>
-                    <input type="text" name="event_name" required>
-                </div>
+                    <div class="form-actions">
+                        <button type="submit">Submit</button>
+                    </div>
+                </form>
+            </section>
+        </main>
 
-                <div class="form-actions">
-                    <button type="submit">Submit</button>
-                </div>
-            </form>
-        </section>
-    </main>
-
-    <footer>
-        <h2>IN3046 Cloud Computing - Coursework Project</h2>
-    </footer>
-
-</body>
+        <footer>
+            <h2>IN3046 Cloud Computing - Coursework Project</h2>
+        </footer>
+    </body>
 </html>
