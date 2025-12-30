@@ -46,6 +46,12 @@ def create_event():
     email = request.form.get("email", "").strip().lower()
     event_name = request.form.get("event_name", "").strip()
 
+    location = request.form.get("location", "").strip()
+    capacity = request.form.get("capacity", "").strip()
+
+    if not location or not capacity:
+        return "Missing required fields", 400
+
     if not host_name or not email or not event_name:
         return "Missing required fields", 400
 
@@ -53,6 +59,8 @@ def create_event():
         "host_name": host_name,
         "email": email,
         "event_name": event_name,
+        "location": location,
+        "capacity": capacity,
         "created_at": datetime.utcnow()
     })
 
