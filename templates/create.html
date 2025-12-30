@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Create event</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="/static/style.css" />
+    </head>
+    <body>
+        <header>
+            <h1>UniGather</h1>
+            <p>Create an event</p>
+
+            <nav>
+                <ul class="header-nav">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/about">About Us</a></li>
+                    <li><a href="/events-page">Events</a></li>
+                    <li><a href="/login">Login / Register</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <section class="form-section">
+                <h2>Event Creation Form</h2>
+
+                <form action="/create/submit-event" method="POST">
+                    <div class="form-field-normal">
+                        <label>Host Name:</label>
+                        <input type="text" name="host_name" required />
+                    </div>
+
+                    <div class="form-field-normal">
+                        <label>Host Email:</label>
+                        <input type="email" name="host_email" required />
+                    </div>
+
+                    <div class="form-field-normal">
+                        <label>Event Name:</label>
+                        <input type="text" name="event_name" required />
+                    </div>
+
+                    <div class="form-field-normal">
+                        <label>Event Location:</label>
+                        <input type="text" name="event_loc" required />
+                    </div>
+
+                    <div class="form-field-normal">
+                        <label>Event Date:</label>
+                        <input type="date" name="event_date" required />
+                    </div>
+
+                    <div class="form-field-normal">
+                        <label>Event Time:</label>
+                        <input type="time" name="event_time" required />
+                    </div>
+
+                    <div class="form-field-normal">
+                        <label>Event Capacity:</label>
+                        <input type="number" name="event_cap" required />
+                    </div>
+
+                    <div class="form-field-normal">
+                        <label>Event Description:</label>
+                        <textarea name="event_desc" required></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit">Submit</button>
+                    </div>
+                </form>
+            </section>
+        </main>
+
+        <footer>
+            <h2>IN3046 Cloud Computing - Coursework Project</h2>
+        </footer>
+    </body>
+</html>
