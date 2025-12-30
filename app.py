@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, make_response, redirect
 from db import get_db
 from datetime import datetime
 
@@ -6,6 +6,7 @@ from datetime import datetime
 app = Flask(__name__)
 db = get_db()
 events = db["events"]
+users = db["users"]
 
 
 # ======================
@@ -53,6 +54,31 @@ def get_all_events():
         d["_id"] = str(d["_id"])
 
     return jsonify(docs), 200
+
+
+@app.post("/login")
+def login():
+    username = request.form.get("username", "").strip()
+    password = request.form.get("password", "").strip()
+
+    if not username or not password:
+        return "Missing credentials", 400
+
+    user = users.find_one({
+        "username": username,
+        "password": password  # plain text (as agreed)
+    })
+
+    if not user:
+        return "Invalid username or password", 401
+
+    # Create response and store user_id + role in cookies
+    response = make_response(redirect("/events-page"))
+    response.set_cookie("user_id", str(user["_id"]))
+    response.set_cookie("role", user["role"])
+
+    return response
+
 
 
 # ======================
