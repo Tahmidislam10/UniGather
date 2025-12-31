@@ -51,7 +51,7 @@
             async function getEvents() {
                 try {
                     const res = await fetch("/events");
-                    const allEvents = await res.json();
+                    allEvents = await res.json();
                     displayEvents(allEvents);
                 } catch (err) {
                     console.error("getEvents() error: " + err);
@@ -84,8 +84,12 @@
                         </div>
                         
                         <div class="event-details">
-                            <p>Full Event Title: ${event.event_name}</p>
-                            <p>Email: ${event.email}</p>
+                            <p><strong>Email:</strong> ${event.email}</p>
+                            <button 
+                                class="book-btn"
+                                onclick="bookEvent('${event._id}')">
+                                Book Event
+                            </button>
                             <!-- <p>Date Created: ${new Date(
                                 event.created_at
                             ).toLocaleString()}</p> -->
@@ -120,6 +124,26 @@
             const createButton = document.getElementById("create-event-button");
             if (createButton) createButton.addEventListener("click", checkPermission);
             getEvents();
+
+
+            async function bookEvent(eventId) {
+                try {
+                    const res = await fetch("/book-event", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ eventId })
+         });
+
+            const data = await res.text();
+            alert(data);
+        } catch (err) {
+            console.error("Booking error:", err);
+            alert("Failed to book event");
+        }
+}
+
         </script>
     </body>
 </html>
