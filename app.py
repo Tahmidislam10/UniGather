@@ -2,6 +2,8 @@ from flask import Flask, request, jsonify, render_template, make_response, redir
 from db import get_db
 from datetime import datetime
 from bson.objectid import ObjectId
+from bson import ObjectId
+
 
 # Initialise Flask app, Connect to MongoDB database, Reference the "events" collection
 app = Flask(__name__)
@@ -54,14 +56,18 @@ def login_page():
 # Get all events (used by frontend via fetch)
 @app.get("/events")
 def get_all_events():
-    # Fetch all events sorted by newest first
     docs = list(events.find().sort("created_at", -1))
 
-    # Convert MongoDB ObjectId to string for JSON compatibility
     for d in docs:
+        # Convert main event ID
         d["_id"] = str(d["_id"])
 
+        # Convert booked user IDs if they exist
+        if "booked_users" in d:
+            d["booked_users"] = [str(uid) for uid in d["booked_users"]]
+
     return jsonify(docs), 200
+
 
 
 @app.post("/login")
@@ -87,6 +93,62 @@ def login():
 
     return response
 
+# ======================
+# Event Booking system
+# ======================
+
+@app.post("/book-event")
+def book_event():
+    # Read user info from cookies
+    user_id = request.cookies.get("user_id")
+    role = request.cookies.get("role")
+
+    if not user_id:
+        return "You must be logged in to book events", 401
+
+    # Optional: allow both staff & students to book
+    if role not in ["student", "staff"]:
+        return "Not allowed", 403
+
+    data = request.get_json()
+    event_id = data.get("eventId")
+
+    if not event_id:
+        return "Missing event ID", 400
+
+    user_oid = ObjectId(user_id)
+    event_oid = ObjectId(event_id)
+
+    user = users.find_one({"_id": user_oid})
+    event = events.find_one({"_id": event_oid})
+
+    if not user or not event:
+        return "Invalid user or event", 404
+
+    # Capacity check
+    booked_users = event.get("booked_users", [])
+    capacity = int(event.get("event_cap", 0))
+
+    if len(booked_users) >= capacity:
+        return "Event is full", 400
+
+    # Prevent duplicate booking
+    if user_oid in booked_users:
+        return "You have already booked this event", 400
+
+    # Update user (HashSet behaviour)
+    users.update_one(
+        {"_id": user_oid},
+        {"$addToSet": {"booked_events": event_oid}}
+    )
+
+    # Update event (HashSet behaviour)
+    events.update_one(
+        {"_id": event_oid},
+        {"$addToSet": {"booked_users": user_oid}}
+    )
+
+    return "Event booked successfully", 200
 
 
 # ======================
