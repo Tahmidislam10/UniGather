@@ -100,7 +100,23 @@
             function toggleEvent(event) {
                 event.classList.toggle("toggled");
             }
+          
+            function getCookie(name) {
+                const match = document.cookie.match(
+                    new RegExp("(^| )" + name + "=([^;]+)")
+                );
+                return match ? decodeURIComponent(match[2]) : null;
+            }
 
+            function hideCreateIfNotStaff() {
+                const role = getCookie("role");
+                const btn = document.getElementById("create-event-btn");
+                if (btn && role !== "staff") {
+                    btn.style.display = "none";
+                }
+            }
+
+            hideCreateIfNotStaff(); 
             getEvents();
         </script>
     </body>
