@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, render_template, make_response, redirect
 from db import get_db
 from datetime import datetime
+from bson.objectid import ObjectId
 
 # Initialise Flask app, Connect to MongoDB database, Reference the "events" collection
 app = Flask(__name__)
@@ -95,6 +96,23 @@ def login():
 # Handle event creation form submission
 @app.post("/create/submit-event")
 def create_event():
+    user_id = request.cookies.get("user_id")
+
+    # 400 = bad request: client error in request
+    # 401 = unauthorised: authentication failed or insufficient info provided
+    # 403 = forbidden: request was valid but user's permissions insufficient
+
+    if not user_id:
+        return "Unauthorised User: you must be logged in.", 401
+    
+    try:
+        user = users.find_one({"_id": ObjectId(user_id)})
+    except:
+        return "Unauthorised User: your user does not exist.", 400
+    
+    if not user or user.get("role") != "staff":
+        return "Unauthorised User: you do not have the required permissions", 403
+
     # Read form inputs (MATCH form field names)
     event = {
         "host_name": request.form.get("host_name", "").strip(),
