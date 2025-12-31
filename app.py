@@ -95,31 +95,45 @@ def login():
 # Handle event creation form submission
 @app.post("/create/submit-event")
 def create_event():
-    # Read form inputs
-    host_name = request.form.get("host_name", "").strip()
-    email = request.form.get("email", "").strip().lower()
-    event_name = request.form.get("event_name", "").strip()
-    location = request.form.get("location", "").strip()
-    capacity = request.form.get("capacity", "").strip()
-
-    # Basic validation: ensure required fields are present
-    if not host_name or not email or not event_name:
-        return "Missing required fields", 400
-
-    if not location or not capacity:
-        return "Missing required fields", 400
-
-    # Insert new event into MongoDB
-    events.insert_one({
-        "host_name": host_name,
-        "email": email,
-        "event_name": event_name,
-        "location": location,
-        "capacity": capacity,
+    # Read form inputs (MATCH form field names)
+    event = {
+        "host_name": request.form.get("host_name", "").strip(),
+        "host_email": request.form.get("host_email", "").strip().lower(),
+        "event_name": request.form.get("event_name", "").strip(),
+        "event_loc": request.form.get("event_loc", "").strip(),
+        "event_date": request.form.get("event_date", "").strip(),
+        "event_time": request.form.get("event_time", "").strip(),
+        "event_cap": int(request.form.get("event_cap", 0)),
+        "event_desc": request.form.get("event_desc", "").strip(),
         "created_at": datetime.utcnow()
-    })
+    }
 
-    return f"Event created: {event_name}", 201
+    # Required field validation
+    required_fields = [
+        "host_name",
+        "host_email",
+        "event_name",
+        "event_loc",
+        "event_date",
+        "event_time"
+    ]
+
+    for field in required_fields:
+        if not event[field]:
+            return f"Missing field: {field}", 400
+
+    # Insert into MongoDB
+    result = events.insert_one(event)
+
+    # MongoDB auto-generated unique event ID
+    event_id = str(result.inserted_id)
+
+    return {
+        "message": "Event created successfully",
+        "event_id": event_id
+    }, 201
+
+
 
 
 # ======================
