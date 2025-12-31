@@ -169,7 +169,7 @@ ul, ol {
     padding-top: 15px;
     border-top: 1px solid #1e1e1e;
     color: #1e1e1e;
-    line-height: 1.6;
+    line-height: 0.6;
 }
 
 .event-item.toggled .event-details {
