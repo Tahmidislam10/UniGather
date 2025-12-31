@@ -26,10 +26,12 @@ def events_page():
     return render_template("events.html")
 
 # Event creation page
+
 @app.route("/create")
 def create_page():
-    role = get_logged_in_role()
     return render_template("create.html")
+
+
 
 # About page
 @app.route("/about")
@@ -42,20 +44,10 @@ def login_page():
     return render_template("login.html")
 
 
-
-
-
 # ======================
 # API ROUTES (JSON)
 # ======================
 
-def get_logged_in_role():
-    # returns "staff" / "student" / None
-    return request.cookies.get("role")
-
-
-def is_logged_in():
-    return request.cookies.get("user_id") is not None
 
 
 # Get all events (used by frontend via fetch)
@@ -103,9 +95,6 @@ def login():
 # Handle event creation form submission
 @app.post("/create/submit-event")
 def create_event():
-    role = get_logged_in_role()
-    if role != "staff":
-        return "Forbidden: staff only", 403
     # Read form inputs
     host_name = request.form.get("host_name", "").strip()
     email = request.form.get("email", "").strip().lower()
