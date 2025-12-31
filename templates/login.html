@@ -1,52 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <title>Login / Register</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="/static/style.css" />
-    </head>
-    <body>
-        <header>
-            <h1>UniGather</h1>
-            <p>Login / Register</p>
+<head>
+    <meta charset="UTF-8">
+    <title>Login / Register</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
 
-            <nav>
-                <ul class="header-nav">
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/about">About Us</a></li>
-                    <li><a href="/events-page">Events</a></li>
-                    <li>
-                        <a href="/login" class="active">Login / Register</a>
-                    </li>
-                </ul>
-            </nav>
-        </header>
+    <header>
+        <h1>UniGather</h1>
+        <p>Login / Register</p>
 
-        <main>
-            <section class="form-section">
-                <!-- Login / Register form will go here -->
+        <nav>
+            <ul class="header-nav">
+                <li><a href="/">Home</a></li>
+                <li><a href="/about">About Us</a></li>
+                <li><a href="/events-page">Events</a></li>
+                <li><a href="/login" class="active">Login / Register</a></li>
+            </ul>
+        </nav>
+    </header>
 
-                <form action="/create/submit-event" method="POST">
-                    <div class="form-field-normal">
-                        <label>Username:</label>
-                        <input type="text" name="username" required />
-                    </div>
+    <main>
+        <section class="form-section">
+            <!-- Login / Register form will go here -->
 
-                    <div class="form-field-normal">
-                        <label>Password:</label>
-                        <input type="text" name="password" required />
-                    </div>
+            <form action="/login" method="POST">
+                <div class="form-field-normal">
+                    <label>Username:</label>
+                    <input type="text" name="username" required>
+                </div>
 
-                    <div class="form-actions">
-                        <button type="submit">Submit</button>
-                    </div>
-                </form>
-            </section>
-        </main>
+                <div class="form-field-normal">
+                    <label>Password:</label>
+                    <input type="password" name="password" required>
+                </div>
 
-        <footer>
-            <h2>IN3046 Cloud Computing - Coursework Project</h2>
-        </footer>
-    </body>
+                <div class="form-actions">
+                    <button type="submit">Submit</button>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <h2>IN3046 Cloud Computing - Coursework Project</h2>
+    </footer>
+
+</body>
 </html>
