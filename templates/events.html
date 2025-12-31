@@ -80,9 +80,12 @@
                         </div>
                         
                         <div class="event-details">
-                            <p>Email: ${event.email}</p>
-                            <!-- <p>Date Created: ${new Date(event.created_at).toLocaleString()}</p> -->
-                            <p></p>
+                            <p><strong>Email:</strong> ${event.host_email}</p>
+                            <p><strong>Location:</strong> ${event.event_loc}</p>
+                            <p><strong>Date:</strong> ${event.event_date}</p>
+                            <p><strong>Time:</strong> ${event.event_time}</p>
+                            <p><strong>Capacity:</strong> ${event.event_cap}</p>
+                            <p><strong>Description:</strong> ${event.event_desc}</p>
                         </div>
                     `;
 
