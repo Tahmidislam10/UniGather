@@ -18,15 +18,11 @@ users = db["users"]
 # Home page
 @app.route("/")
 def home():
-    if not is_logged_in():
-        return redirect("/login")
     return render_template("index.html")
 
 # Events listing page
 @app.route("/events-page")
 def events_page():
-    if not is_logged_in():
-        return redirect("/login")
     return render_template("events.html")
 
 # Event creation page
@@ -38,8 +34,6 @@ def create_page():
 # About page
 @app.route("/about")
 def about_page():
-    if not is_logged_in():
-        return redirect("/login")
     return render_template("about.html")
 
 # Login / Register page
@@ -47,12 +41,7 @@ def about_page():
 def login_page():
     return render_template("login.html")
 
-@app.route("/logout")
-def logout():
-    response = make_response(redirect("/login"))
-    response.delete_cookie("user_id", path="/")
-    response.delete_cookie("role", path="/")
-    return response
+
 
 
 
