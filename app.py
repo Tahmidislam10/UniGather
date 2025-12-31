@@ -18,30 +18,42 @@ users = db["users"]
 # Home page
 @app.route("/")
 def home():
+    if not is_logged_in():
+        return redirect("/login")
     return render_template("index.html")
 
 # Events listing page
 @app.route("/events-page")
 def events_page():
+    if not is_logged_in():
+        return redirect("/login")
     return render_template("events.html")
 
 # Event creation page
 @app.route("/create")
 def create_page():
     role = get_logged_in_role()
-    if role != "staff":
-        return "Forbidden: staff only", 403
     return render_template("create.html")
 
 # About page
 @app.route("/about")
 def about_page():
+    if not is_logged_in():
+        return redirect("/login")
     return render_template("about.html")
 
 # Login / Register page
 @app.route("/login")
 def login_page():
     return render_template("login.html")
+
+@app.route("/logout")
+def logout():
+    response = make_response(redirect("/login"))
+    response.delete_cookie("user_id", path="/")
+    response.delete_cookie("role", path="/")
+    return response
+
 
 
 # ======================
@@ -51,6 +63,11 @@ def login_page():
 def get_logged_in_role():
     # returns "staff" / "student" / None
     return request.cookies.get("role")
+
+
+def is_logged_in():
+    return request.cookies.get("user_id") is not None
+
 
 # Get all events (used by frontend via fetch)
 @app.get("/events")
