@@ -26,7 +26,7 @@
         <section class="form-section">
             <!-- Login / Register form will go here -->
 
-            <form action="/login" method="POST">
+            <form id="login-form">
                 <div class="form-field-normal">
                     <label>Username:</label>
                     <input type="text" name="username" required>
@@ -48,5 +48,32 @@
         <h2>IN3046 Cloud Computing - Coursework Project</h2>
     </footer>
 
+    <script>
+            async function login(event) {
+                event.preventDefault();
+
+                const form = event.target;
+                const formData = new FormData(form);
+
+                try {
+                    const response = await fetch("/login", {
+                        method: "POST",
+                        body: formData
+                    });
+
+                    if (response.ok) {
+                        alert("Successfully logged in.");
+                        window.location.href = "/events-page";
+                    } else {
+                        alert(await response.text());
+                    }
+                } catch (err) {
+                    console.error("Login Error: ", err);
+                    alert("Login Error.");
+                }
+            }
+
+            document.getElementById("login-form").addEventListener("submit", login);
+        </script>
 </body>
 </html>
