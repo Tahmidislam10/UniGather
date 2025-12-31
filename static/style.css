@@ -197,3 +197,7 @@ ul, ol {
     display: flex;
     justify-content: center;
 }
+
+.event-item.toggled .toggle-icon {
+    transform: rotate(180deg);
+}
