@@ -9,6 +9,8 @@ events = db["events"]
 users = db["users"]
 
 
+
+
 # ======================
 # PAGE ROUTES (HTML)
 # ======================
@@ -26,6 +28,9 @@ def events_page():
 # Event creation page
 @app.route("/create")
 def create_page():
+    role = get_logged_in_role()
+    if role != "staff":
+        return "Forbidden: staff only", 403
     return render_template("create.html")
 
 # About page
@@ -42,6 +47,10 @@ def login_page():
 # ======================
 # API ROUTES (JSON)
 # ======================
+
+def get_logged_in_role():
+    # returns "staff" / "student" / None
+    return request.cookies.get("role")
 
 # Get all events (used by frontend via fetch)
 @app.get("/events")
@@ -88,6 +97,9 @@ def login():
 # Handle event creation form submission
 @app.post("/create/submit-event")
 def create_event():
+    role = get_logged_in_role()
+    if role != "staff":
+        return "Forbidden: staff only", 403
     # Read form inputs
     host_name = request.form.get("host_name", "").strip()
     email = request.form.get("email", "").strip().lower()
