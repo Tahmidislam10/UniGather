@@ -82,8 +82,13 @@ ul, ol {
     color: #ffffff;
 }
 
+.search-events {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
 .search-events input {
-    width: 50%;
+    width: 80%;
 }
 
 /* Form Styling */
