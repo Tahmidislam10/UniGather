@@ -111,20 +111,12 @@
             function checkPermission(event) {
                 const role = getCookie("role")
 
-                if (role !== "staff" || role !== "student") {
+                if (role !== "staff") {
                     event.preventDefault();
                     alert("You must be logged in to create an event.");
                 }
             }
 
-            function hideCreateIfNotStaff() {
-                const role = getCookie("role");
-                const btn = document.getElementById("create-event-btn");
-                if (btn && role !== "staff") {
-                    btn.style.display = "none";
-                }
-            }
-            
             const createButton = document.getElementById("create-event-button");
             if (createButton) createButton.addEventListener("click", checkPermission);
             getEvents();
