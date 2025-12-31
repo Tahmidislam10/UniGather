@@ -94,7 +94,7 @@ def login():
     return response
 
 # ======================
-# Event Booking system
+# Event Booking system 
 # ======================
 
 @app.post("/book-event")
@@ -149,6 +149,35 @@ def book_event():
     )
 
     return "Event booked successfully", 200
+
+# ======================
+# Event Cancel system
+# ======================
+
+
+@app.post("/cancel-booking")
+def cancel_booking():
+    user_id = request.cookies.get("user_id")
+    data = request.get_json()
+    event_id = data.get("eventId")
+
+    if not user_id or not event_id:
+        return "Missing user or event", 400
+
+    # Remove event from user's bookings
+    users.update_one(
+        {"_id": ObjectId(user_id)},
+        {"$pull": {"booked_events": event_id}}
+    )
+
+    # Remove user from event's booked users
+    events.update_one(
+        {"_id": ObjectId(event_id)},
+        {"$pull": {"booked_users": user_id}}
+    )
+
+    return "Booking cancelled", 200
+
 
 
 # ======================

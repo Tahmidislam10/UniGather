@@ -84,11 +84,18 @@
                         </div>
                         
                         <div class="event-details">
-                            <p><strong>Email:</strong> ${event.email}</p>
+                            <p><strong>Email:</strong> ${event.host_email}</p>
+
                             <button 
                                 class="book-btn"
                                 onclick="bookEvent('${event._id}')">
                                 Book Event
+                            </button>
+
+                            <button 
+                                class="cancel-btn"
+                                onclick="cancelBooking('${event._id}')">
+                                Cancel Booking
                             </button>
                             <!-- <p>Date Created: ${new Date(
                                 event.created_at
@@ -143,6 +150,26 @@
             alert("Failed to book event");
         }
 }
+
+            async function cancelBooking(eventId) {
+            try {
+                const res = await fetch("/cancel-booking", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ eventId })
+                });
+
+                const msg = await res.text();
+                alert(msg);
+                getEvents(); // refresh events list
+            } catch (err) {
+                console.error("Cancel error:", err);
+                alert("Failed to cancel booking");
+            }
+        }
+        
 
         </script>
     </body>
