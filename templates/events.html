@@ -144,7 +144,7 @@
             }
 
             function toggleEvent(event) {
-                event.classList.toggle("toggled");
+                event.classList.toggle("toggled"); // Expands/collapses the event details
             }
 
             function getCookie(name) {
@@ -157,7 +157,7 @@
             function checkPermission(event) {
                 const role = getCookie("role");
 
-                if (role !== "staff") {
+                if (role !== "staff") { // As of now, only staff can create events
                     event.preventDefault();
                     alert("You must be logged in to create an event.");
                 }
