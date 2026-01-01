@@ -1,195 +1,208 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Events</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/static/style.css" />
-  </head>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Events</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="/static/style.css" />
+    </head>
 
-  <body>
-    <header>
-      <h1>UniGather</h1>
-      <p>All events</p>
+    <body>
+        <header>
+            <h1>UniGather</h1>
+            <p>All events</p>
 
-      <nav>
-        <ul class="header-nav">
-          <li><a href="/">Home</a></li>
-          <li><a href="/about">About Us</a></li>
-          <li><a href="/events-page" class="active">Events</a></li>
-          <li><a href="/login">Login / Register</a></li>
-        </ul>
-      </nav>
-    </header>
+            <nav>
+                <ul class="header-nav">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/about">About Us</a></li>
+                    <li><a href="/events-page" class="active">Events</a></li>
+                    <li><a href="/login">Login / Register</a></li>
+                </ul>
+            </nav>
+        </header>
 
-    <main>
-      <section>
-        <br />
-        <a href="/create" class="button" id="create-event-button"
-          >Create event</a
-        >
+        <main>
+            <section>
+                <br />
+                <a href="/create" class="button" id="create-event-button"
+                    >Create event</a
+                >
 
-        <br /><br />
-        <form class="search-events">
-          <input type="search" placeholder="Search for an event title..." />
-          <button type="submit">Search</button>
-        </form>
-      </section>
+                <br /><br />
+                <form class="search-events">
+                    <input
+                        type="search"
+                        placeholder="Search for an event title..."
+                    />
+                    <button type="submit">Search</button>
+                </form>
+            </section>
 
-      <!-- EVENTS RENDER HERE -->
-      <section id="events-list"></section>
-    </main>
+            <!-- EVENTS RENDER HERE -->
+            <section id="events-list"></section>
+        </main>
 
-    <footer>
-      <h2>IN3046 Cloud Computing - Coursework Project</h2>
-    </footer>
+        <footer>
+            <h2>IN3046 Cloud Computing - Coursework Project</h2>
+        </footer>
 
-    <script>
-      let allEvents = [];
+        <script>
+            let allEvents = [];
 
-      async function getEvents() {
-        try {
-          const res = await fetch("/events");
-          allEvents = await res.json();
-          displayEvents(allEvents);
-        } catch (err) {
-          console.error("getEvents() error: " + err);
-          document.getElementById("events-list").innerHTML =
-            "<p>Error loading events.</p>";
-        }
-      }
+            async function getEvents() {
+                try {
+                    const res = await fetch("/events");
+                    allEvents = await res.json();
+                    displayEvents(allEvents);
+                } catch (err) {
+                    console.error("getEvents() error: " + err);
+                    document.getElementById("events-list").innerHTML =
+                        "<p>Error loading events.</p>";
+                }
+            }
 
-      function displayEvents(events) {
-    const eventsSection = document.getElementById("events-list");
-    const currentUserId = getCookie("user_id"); // Get the logged-in user's ID
-    eventsSection.innerHTML = "";
+            function displayEvents(events) {
+                const eventsSection = document.getElementById("events-list");
+                eventsSection.innerHTML = ""; // Resets the event list
 
-    if (events.length === 0) {
-        eventsSection.innerHTML = "<p>No events found.</p>";
-        return;
-    }
+                if (events.length === 0) {
+                    eventsSection.innerHTML = "<p>No events found.</p>";
+                    return;
+                }
 
-    for (const event of events) {
-        const eventDiv = document.createElement("div");
-        eventDiv.className = "event-item";
+                const currentUserId = getCookie("user_id");
 
-        // Check if the current user is already in the event's booked_users list
-        const isBooked = event.booked_users && event.booked_users.includes(currentUserId);
+                for (const event of events) {
+                    const isBooked =
+                        event.booked_users &&
+                        event.booked_users.includes(currentUserId);
+                    const eventDiv = document.createElement("div"); // Creates new event div
+                    eventDiv.className = "event-item";
 
-        eventDiv.innerHTML = `
-            <div class="event-main">
-                <h3>${event.event_name}</h3>
-                <p><b>Host:</b> ${event.host_name}</p>
-                <p><b>Date:</b> ${event.event_date}  <b>Time:</b> ${event.event_time}</p>
-                <span class="toggle-icon">▼</span>
-            </div>
-            
-            <div class="event-details">
-                <div class="event-details-wide">
-                    <p><b>Full Event Title:</b> ${event.event_name}</p>
-                </div>
+                    // Writes the HTML
+                    eventDiv.innerHTML = `
+                        <!-- ALWAYS-VISIBLE EVENT SUMMARY/HEADER -->
+                        <div class="event-main">
+                            <h3>${event.event_name}</h3>
+                            <p><b>Host:</b> ${event.host_name}</p>
+                            <p><b>Date:</b> ${event.event_date}  <b>Time:</b> ${
+                        event.event_time
+                    }</p>
+                            <span class="toggle-icon">▼</span>
+                        </div>
+                        
+                        <!-- SECTION BELOW EXPANDS/COLLAPSES UPON CLICK -->
+                        <div class="event-details">
+                            <div class="event-details-wide">
+                                <p><b>Full Event Title:</b> ${
+                                    event.event_name
+                                }</p>
+                            </div>
 
-                <div class="event-details-grid">
-                    <div>
-                        <p><b>Host Name:</b> ${event.host_name}</p>
-                        <p><b>Host Email:</b> ${event.host_email}</p>
-                        <p><b>Capacity:</b> ${event.event_cap}</p>
-                    </div>
+                            <div class="event-details-grid">
+                                <div>
+                                    <p><b>Host Name:</b> ${event.host_name}</p>
+                                    <p><b>Host Email:</b> ${
+                                        event.host_email
+                                    }</p>
+                                    <p><b>Capacity:</b> ${event.event_cap}</p>
+                                </div>
 
-                    <div>
-                        <p><b>Date:</b> ${event.event_date}</p>
-                        <p><b>Time:</b> ${event.event_time}</p>
-                        <p><b>Location:</b> ${event.event_loc}</p>
-                    </div>
-                </div>
+                                <div>
+                                    <p><b>Date:</b> ${event.event_date}</p>
+                                    <p><b>Time:</b> ${event.event_time}</p>
+                                    <p><b>Location:</b> ${event.event_loc}</p>
+                                </div>
+                            </div>
 
-                <div class="event-details-wide">
-                    <p><b>Description:</b></p>
-                    <p style="white-space: pre-wrap">${event.event_desc}</p>
-                </div>
+                            <div class="event-details-wide">
+                                <p><b>Description:</b></p>
+                                <p style="white-space: pre-wrap">${
+                                    event.event_desc
+                                }</p>
+                            </div>
 
-                ${isBooked ? `
-                    <button 
-                        class="book-btn cancel-btn" 
-                        onclick="event.stopPropagation(); cancelBooking('${event.id}')" 
-                        style="background-color: #ff4d4d;">
-                        Cancel Booking
-                    </button>
-                ` : `
-                    <button 
-                        class="book-btn" 
-                        onclick="event.stopPropagation(); bookEvent('${event.id}')">
-                        Book Event
-                    </button>
-                `}
-            </div>
-        `;
+                            <!-- DYNAMIC BOOK/CANCEL BUTTON -->
+                            <button 
+                                class="${
+                                    isBooked ? "cancel-button" : "book-button"
+                                }"
+                                onclick="${
+                                    isBooked
+                                        ? `cancelBooking('${event._id}')`
+                                        : `makeBooking('${event._id}')`
+                                }; event.stopPropagation();">
+                                ${isBooked ? "Cancel Booking" : "Book Event"}
+                            </button>
+                        </div>
+                    `;
 
-        eventDiv.onclick = () => toggleEvent(eventDiv);
-        eventsSection.appendChild(eventDiv);
-    }
-}
+                    eventDiv.onclick = () => toggleEvent(eventDiv); // Creates the click detector
+                    eventsSection.appendChild(eventDiv); // Adds the new event div to the event section
+                }
+            }
 
-      function toggleEvent(event) {
-        event.classList.toggle("toggled");
-      }
+            function toggleEvent(event) {
+                event.classList.toggle("toggled"); // Expands/collapses the event details
+            }
 
-      function getCookie(name) {
-        const match = document.cookie.match(
-          new RegExp("(^| )" + name + "=([^;]+)")
-        );
-        return match ? decodeURIComponent(match[2]) : null;
-      }
+            function getCookie(name) {
+                const match = document.cookie.match(
+                    new RegExp("(^| )" + name + "=([^;]+)")
+                );
+                return match ? decodeURIComponent(match[2]) : null;
+            }
 
-      function checkPermission(event) {
-        const role = getCookie("role");
+            function checkPermission(event) {
+                const role = getCookie("role");
 
-        if (role !== "staff") {
-          event.preventDefault();
-          alert("You must be logged in to create an event.");
-        }
-      }
+                if (role !== "staff") { // As of now, only staff can create events
+                    event.preventDefault();
+                    alert("You must be logged in to create an event.");
+                }
+            }
 
-      const createButton = document.getElementById("create-event-button");
-      if (createButton) createButton.addEventListener("click", checkPermission);
-      getEvents();
+            async function makeBooking(eventId) {
+                try {
+                    const res = await fetch("/book-event", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ eventId }),
+                    });
 
-      async function bookEvent(eventId) {
-        try {
-          const res = await fetch("/book-event", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ eventId }),
-          });
+                    alert(await res.text());
+                    getEvents(); // Refreshes the events list
+                } catch (err) {
+                    console.error("Booking error:", err);
+                    alert("Failed to book event");
+                }
+            }
 
-          const data = await res.text();
-          alert(data);
-        } catch (err) {
-          console.error("Booking error:", err);
-          alert("Failed to book event");
-        }
-      }
+            async function cancelBooking(eventId) {
+                try {
+                    const res = await fetch("/cancel-booking", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ eventId }),
+                    });
 
-      async function cancelBooking(eventId) {
-        if (!confirm("Are you sure you want to cancel this booking?")) return;
+                    alert(await res.text());
+                    getEvents(); // Refreshes the events list
+                } catch (err) {
+                    console.error("Cancel error:", err);
+                    alert("Failed to cancel booking");
+                }
+            }
 
-        try {
-          const res = await fetch("/cancel-booking", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ eventId }),
-          });
-
-          const data = await res.text();
-          alert(data);
-          getEvents(); // Refresh the list to update button states
-        } catch (err) {
-          console.error("Cancellation error:", err);
-          alert("Failed to cancel booking");
-        }
-      }
-    </script>
-  </body>
+            const createButton = document.getElementById("create-event-button");
+            if (createButton)
+                createButton.addEventListener("click", checkPermission);
+            getEvents();
+        </script>
+    </body>
 </html>
