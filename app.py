@@ -3,6 +3,7 @@ from flask import Flask, request, jsonify, render_template, make_response, redir
 from db import get_db 
 from datetime import datetime
 from boto3.dynamodb.conditions import Key, Attr
+from dateutil import parser 
 
 app = Flask(__name__)
 
@@ -54,6 +55,75 @@ def get_all_events():
             item["booked_users"] = [] # Return empty list to frontend if no one booked yet
             
     return jsonify(items), 200
+
+
+
+@app.get("/events/<event_id>")
+def get_single_event(event_id):
+    response = events_table.get_item(Key={"id": event_id})
+    event = response.get("Item")
+
+    if not event:
+        return "Event not found", 404
+
+    # Convert DynamoDB sets → lists for JSON
+    if "booked_users" in event and isinstance(event["booked_users"], set):
+        event["booked_users"] = list(event["booked_users"])
+
+    return jsonify(event), 200
+
+
+#Reminder system 
+@app.get("/api/reminders")
+def get_reminders():
+    user_id = request.cookies.get("user_id")
+
+    if not user_id:
+        return "Not logged in", 401
+
+    # 1. Get user
+    user_res = users_table.get_item(Key={"id": user_id})
+    user = user_res.get("Item")
+
+    if not user:
+        return "User not found", 404
+
+    booked_events = user.get("booked_events", set())
+
+    if not booked_events:
+        return jsonify([]), 200
+
+    reminders = []
+
+    # 2. Fetch each booked event
+    for event_id in booked_events:
+        event_res = events_table.get_item(Key={"id": event_id})
+        event = event_res.get("Item")
+
+        if not event:
+            continue
+
+        # 3. Calculate time remaining
+        event_datetime = parser.parse(
+            f"{event['event_date']} {event['event_time']}"
+        )
+        now = datetime.utcnow()
+        time_remaining = event_datetime - now
+
+        reminders.append({
+            "event_id": event["id"],
+            "event_name": event["event_name"],
+            "event_date": event["event_date"],
+            "event_time": event["event_time"],
+            "time_remaining_seconds": int(time_remaining.total_seconds())
+        })
+
+    return jsonify(reminders), 200
+
+
+# ======================
+# Event Login system 
+# ======================
 
 @app.post("/login")
 def login():
