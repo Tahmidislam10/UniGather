@@ -73,52 +73,42 @@ def get_single_event(event_id):
     return jsonify(event), 200
 
 
-#Reminder system 
-@app.get("/api/reminders")
+@app.get("/reminders")
 def get_reminders():
     user_id = request.cookies.get("user_id")
 
     if not user_id:
         return "Not logged in", 401
 
-    # 1. Get user
+    # Fetch user
     user_res = users_table.get_item(Key={"id": user_id})
     user = user_res.get("Item")
 
     if not user:
         return "User not found", 404
 
-    booked_events = user.get("booked_events", set())
+    booked_event_ids = user.get("booked_events", set())
 
-    if not booked_events:
+    if not booked_event_ids:
         return jsonify([]), 200
 
     reminders = []
 
-    # 2. Fetch each booked event
-    for event_id in booked_events:
+    # Fetch each booked event
+    for event_id in booked_event_ids:
         event_res = events_table.get_item(Key={"id": event_id})
         event = event_res.get("Item")
 
-        if not event:
-            continue
+        if event:
+            reminders.append(event)
 
-        # 3. Calculate time remaining
-        event_datetime = parser.parse(
-            f"{event['event_date']} {event['event_time']}"
-        )
-        now = datetime.utcnow()
-        time_remaining = event_datetime - now
-
-        reminders.append({
-            "event_id": event["id"],
-            "event_name": event["event_name"],
-            "event_date": event["event_date"],
-            "event_time": event["event_time"],
-            "time_remaining_seconds": int(time_remaining.total_seconds())
-        })
+    # Sort by soonest upcoming event
+    reminders.sort(
+        key=lambda e: f"{e.get('event_date', '')} {e.get('event_time', '')}"
+    )
 
     return jsonify(reminders), 200
+
 
 
 # ======================
