@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "Cloud Computing",
+			"path": "."
+		},
+		{
+			"name": "app",
+			"path": "../../../Downloads/ECS-Group-Project-main/app"
+		}
+	],
+	"settings": {}
+}

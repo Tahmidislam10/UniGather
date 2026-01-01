@@ -130,8 +130,8 @@
                                 }"
                                 onclick="${
                                     isBooked
-                                        ? `cancelBooking('${event._id}')`
-                                        : `makeBooking('${event._id}')`
+                                        ? `cancelBooking('${event.id}')`
+                                        : `makeBooking('${event.id}')`
                                 }; event.stopPropagation();">
                                 ${isBooked ? "Cancel Booking" : "Book Event"}
                             </button>
@@ -182,6 +182,8 @@
             }
 
             async function cancelBooking(eventId) {
+                if (!confirm("Are you sure you want to cancel this booking?")) return;
+
                 try {
                     const res = await fetch("/cancel-booking", {
                         method: "POST",
