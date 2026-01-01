@@ -1,11 +1,7 @@
+import boto3
 import os
-from dotenv import load_dotenv
-from pymongo import MongoClient
 
-load_dotenv()
-
-def get_db():
-    mongo_uri = os.getenv("MONGO_URI", "mongodb://localhost:27017")
-    db_name = os.getenv("DB_NAME", "unigather")
-    client = MongoClient(mongo_uri)
-    return client[db_name]
+def get_table(table_name):
+    # If running on EC2, boto3 can use IAM roles instead of hardcoded keys
+    dynamodb = boto3.resource('dynamodb', region_name=os.getenv("AWS_REGION", "us-east-1"))
+    return dynamodb.Table(table_name)
