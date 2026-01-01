@@ -25,7 +25,9 @@
         <main>
             <section>
                 <br />
-                <a href="/create" class="button" id="create-event-button">Create event</a>
+                <a href="/create" class="button" id="create-event-button"
+                    >Create event</a
+                >
 
                 <br /><br />
                 <form class="search-events">
@@ -76,15 +78,34 @@
                     eventDiv.innerHTML = `
                         <div class="event-main">
                             <h3>${event.event_name}</h3>
-                            <p>Host: ${event.host_name}</p>
-                            <p>Time: ${new Date(
-                                event.created_at
-                            ).toLocaleString()}</p>
+                            <p><b>Host:</b> ${event.host_name}</p>
+                            <p><b>Date:</b> ${event.event_date}  <b>Time:</b> ${event.event_time}</p>
                             <span class="toggle-icon">▼</span>
                         </div>
                         
                         <div class="event-details">
-                            <p><strong>Email:</strong> ${event.host_email}</p>
+                            <div class="event-details-wide">
+                                <p><b>Full Event Title:</b> ${event.event_name}</p>
+                            </div>
+
+                            <div class="event-details-grid">
+                                <div>
+                                    <p><b>Host Name:</b> ${event.host_name}</p>
+                                    <p><b>Host Email:</b> ${event.host_email}</p>
+                                    <p><b>Capacity:</b> ${event.event_cap}</p>
+                                </div>
+
+                                <div>
+                                    <p><b>Date:</b> ${event.event_date}</p>
+                                    <p><b>Time:</b> ${event.event_time}</p>
+                                    <p><b>Location:</b> ${event.event_loc}</p>
+                                </div>
+                            </div>
+
+                            <div class="event-details-wide">
+                                <p><b>Description:</b></p>
+                                <p style="white-space: pre-wrap">${event.event_desc}</p>
+                            </div>
 
                             <button 
                                 class="book-btn"
@@ -111,7 +132,7 @@
             function toggleEvent(event) {
                 event.classList.toggle("toggled");
             }
-          
+
             function getCookie(name) {
                 const match = document.cookie.match(
                     new RegExp("(^| )" + name + "=([^;]+)")
@@ -120,7 +141,7 @@
             }
 
             function checkPermission(event) {
-                const role = getCookie("role")
+                const role = getCookie("role");
 
                 if (role !== "staff") {
                     event.preventDefault();
@@ -129,7 +150,8 @@
             }
 
             const createButton = document.getElementById("create-event-button");
-            if (createButton) createButton.addEventListener("click", checkPermission);
+            if (createButton)
+                createButton.addEventListener("click", checkPermission);
             getEvents();
 
 

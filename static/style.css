@@ -188,11 +188,21 @@ ol {
     padding-top: 10px;
     border-top: 1px solid #1e1e1e;
     color: #1e1e1e;
-    line-height: 0.6;
+    line-height: 1.5;
+}
+
+.event-details p {
+    margin: 2px;
 }
 
 .event-item.toggled .event-details {
     display: block;
+}
+
+.event-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
 }
 
 .toggle-icon {
