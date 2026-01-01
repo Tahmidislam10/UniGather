@@ -79,19 +79,25 @@
                         <div class="event-main">
                             <h3>${event.event_name}</h3>
                             <p><b>Host:</b> ${event.host_name}</p>
-                            <p><b>Date:</b> ${event.event_date}  <b>Time:</b> ${event.event_time}</p>
+                            <p><b>Date:</b> ${event.event_date}  <b>Time:</b> ${
+                        event.event_time
+                    }</p>
                             <span class="toggle-icon">▼</span>
                         </div>
                         
                         <div class="event-details">
                             <div class="event-details-wide">
-                                <p><b>Full Event Title:</b> ${event.event_name}</p>
+                                <p><b>Full Event Title:</b> ${
+                                    event.event_name
+                                }</p>
                             </div>
 
                             <div class="event-details-grid">
                                 <div>
                                     <p><b>Host Name:</b> ${event.host_name}</p>
-                                    <p><b>Host Email:</b> ${event.host_email}</p>
+                                    <p><b>Host Email:</b> ${
+                                        event.host_email
+                                    }</p>
                                     <p><b>Capacity:</b> ${event.event_cap}</p>
                                 </div>
 
@@ -104,7 +110,9 @@
 
                             <div class="event-details-wide">
                                 <p><b>Description:</b></p>
-                                <p style="white-space: pre-wrap">${event.event_desc}</p>
+                                <p style="white-space: pre-wrap">${
+                                    event.event_desc
+                                }</p>
                             </div>
 
                             <button 
@@ -154,45 +162,42 @@
                 createButton.addEventListener("click", checkPermission);
             getEvents();
 
-
             async function bookEvent(eventId) {
                 try {
                     const res = await fetch("/book-event", {
                         method: "POST",
                         headers: {
-                            "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ eventId })
-         });
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ eventId }),
+                    });
 
-            const data = await res.text();
-            alert(data);
-        } catch (err) {
-            console.error("Booking error:", err);
-            alert("Failed to book event");
-        }
-}
+                    const data = await res.text();
+                    alert(data);
+                } catch (err) {
+                    console.error("Booking error:", err);
+                    alert("Failed to book event");
+                }
+            }
 
             async function cancelBooking(eventId) {
-            try {
-                const res = await fetch("/cancel-booking", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ eventId })
-                });
+                try {
+                    const res = await fetch("/cancel-booking", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ eventId }),
+                    });
 
-                const msg = await res.text();
-                alert(msg);
-                getEvents(); // refresh events list
-            } catch (err) {
-                console.error("Cancel error:", err);
-                alert("Failed to cancel booking");
+                    const msg = await res.text();
+                    alert(msg);
+                    getEvents(); // refresh events list
+                } catch (err) {
+                    console.error("Cancel error:", err);
+                    alert("Failed to cancel booking");
+                }
             }
-        }
-        
-
         </script>
     </body>
 </html>
