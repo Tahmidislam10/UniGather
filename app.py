@@ -1,13 +1,12 @@
 import uuid
 from flask import Flask, request, jsonify, render_template, make_response, redirect
-from db import get_db  # Assuming get_db now returns boto3.resource('dynamodb')
+from db import get_db 
 from datetime import datetime
 from boto3.dynamodb.conditions import Key, Attr
 
-# Initialise Flask app
 app = Flask(__name__)
 
-# Connect to DynamoDB tables
+# Initialise connection
 db = get_db()
 events_table = db.Table("events")
 users_table = db.Table("users")
@@ -42,17 +41,17 @@ def login_page():
 
 @app.get("/events")
 def get_all_events():
-    # DynamoDB scan (returns all items)
     response = events_table.scan()
     items = response.get("Items", [])
 
-    # DynamoDB doesn't support built-in sorting on scan, so we sort in Python
     items.sort(key=lambda x: x.get("created_at", ""), reverse=True)
 
-    # Convert sets to lists for JSON serialization (DynamoDB uses sets for 'booked_users')
     for item in items:
+        # Use .get() with an empty list as a fallback
         if "booked_users" in item and isinstance(item["booked_users"], set):
             item["booked_users"] = list(item["booked_users"])
+        else:
+            item["booked_users"] = [] # Return empty list to frontend if no one booked yet
             
     return jsonify(items), 200
 
@@ -147,20 +146,25 @@ def cancel_booking():
     if not user_id or not event_id:
         return "Missing user or event", 400
 
-    # Use "DELETE" to remove from a set in DynamoDB
-    users_table.update_item(
-        Key={"id": user_id},
-        UpdateExpression="DELETE booked_events :e",
-        ExpressionAttributeValues={":e": {event_id}}
-    )
+    try:
+        # Use "DELETE" to remove the specific ID from the String Set (SS)
+        # Note: We provide the value inside a set literal {event_id}
+        users_table.update_item(
+            Key={"id": user_id},
+            UpdateExpression="DELETE booked_events :e",
+            ExpressionAttributeValues={":e": {event_id}}
+        )
 
-    events_table.update_item(
-        Key={"id": event_id},
-        UpdateExpression="DELETE booked_users :u",
-        ExpressionAttributeValues={":u": {user_id}}
-    )
+        events_table.update_item(
+            Key={"id": event_id},
+            UpdateExpression="DELETE booked_users :u",
+            ExpressionAttributeValues={":u": {user_id}}
+        )
 
-    return "Booking cancelled", 200
+        return "Booking cancelled successfully", 200
+    except Exception as e:
+        print(f"Cancel error: {e}")
+        return "Failed to cancel booking", 500
 
 # ======================
 # FORM SUBMISSION
@@ -179,9 +183,9 @@ def create_event():
     if not user or user.get("role") != "staff":
         return "Unauthorised User: permissions insufficient", 403
 
-    # Generate a unique string ID for the new event
     event_id = str(uuid.uuid4())
 
+    # Create the event object WITHOUT an empty set
     event = {
         "id": event_id,
         "host_name": request.form.get("host_name", "").strip(),
@@ -192,11 +196,11 @@ def create_event():
         "event_time": request.form.get("event_time", "").strip(),
         "event_cap": int(request.form.get("event_cap", 0)),
         "event_desc": request.form.get("event_desc", "").strip(),
-        "created_at": datetime.utcnow().isoformat(), # DynamoDB prefers ISO strings for dates
-        "booked_users": set() # Initialise empty set
+        "created_at": datetime.utcnow().isoformat()
+        # REMOVED: "booked_users": set() <- This was causing the error
     }
 
-    # Validation... (kept same as your code)
+    # Validation...
     required_fields = ["host_name", "host_email", "event_name", "event_loc", "event_date", "event_time"]
     for field in required_fields:
         if not event[field]:
