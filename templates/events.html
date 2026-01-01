@@ -71,7 +71,10 @@
                     return;
                 }
 
+                const currentUserId = getCookie("user_id");
+
                 for (const event of events) {
+                    const isBooked = event.booked_users && event.booked_users.includes(currentUserId);
                     const eventDiv = document.createElement("div");
                     eventDiv.className = "event-item";
 
@@ -115,20 +118,12 @@
                                 }</p>
                             </div>
 
+                            <!-- DYNAMIC BOOK/CANCEL BUTTON -->
                             <button 
-                                class="book-btn"
-                                onclick="bookEvent('${event._id}')">
-                                Book Event
+                                class="${isBooked ? "cancel-button" : "book-button"}"
+                                onclick="${isBooked ? `cancelBooking('${event._id}')` : `makeBooking('${event._id}')`}; event.stopPropagation();">
+                                ${isBooked ? "Cancel Booking" : "Book Event"}
                             </button>
-
-                            <button 
-                                class="cancel-btn"
-                                onclick="cancelBooking('${event._id}')">
-                                Cancel Booking
-                            </button>
-                            <!-- <p>Date Created: ${new Date(
-                                event.created_at
-                            ).toLocaleString()}</p> -->
                         </div>
                     `;
 
@@ -162,7 +157,7 @@
                 createButton.addEventListener("click", checkPermission);
             getEvents();
 
-            async function bookEvent(eventId) {
+            async function makeBooking(eventId) {
                 try {
                     const res = await fetch("/book-event", {
                         method: "POST",
