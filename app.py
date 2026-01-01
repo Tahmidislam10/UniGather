@@ -214,6 +214,7 @@ def create_event():
         "event_time": request.form.get("event_time", "").strip(),
         "event_cap": int(request.form.get("event_cap", 0)),
         "event_desc": request.form.get("event_desc", "").strip(),
+        "booked_users":[], 
         "created_at": datetime.utcnow()
     }
 
