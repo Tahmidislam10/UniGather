@@ -64,7 +64,7 @@
 
             function displayEvents(events) {
                 const eventsSection = document.getElementById("events-list");
-                eventsSection.innerHTML = "";
+                eventsSection.innerHTML = ""; // Resets the event list
 
                 if (events.length === 0) {
                     eventsSection.innerHTML = "<p>No events found.</p>";
@@ -74,12 +74,15 @@
                 const currentUserId = getCookie("user_id");
 
                 for (const event of events) {
-                    console.log(event.booked_users);
-                    const isBooked = event.booked_users && event.booked_users.includes(currentUserId);
-                    const eventDiv = document.createElement("div");
+                    const isBooked =
+                        event.booked_users &&
+                        event.booked_users.includes(currentUserId);
+                    const eventDiv = document.createElement("div"); // Creates new event div
                     eventDiv.className = "event-item";
 
+                    // Writes the HTML
                     eventDiv.innerHTML = `
+                        <!-- ALWAYS-VISIBLE EVENT SUMMARY/HEADER -->
                         <div class="event-main">
                             <h3>${event.event_name}</h3>
                             <p><b>Host:</b> ${event.host_name}</p>
@@ -89,6 +92,7 @@
                             <span class="toggle-icon">▼</span>
                         </div>
                         
+                        <!-- SECTION BELOW EXPANDS/COLLAPSES UPON CLICK -->
                         <div class="event-details">
                             <div class="event-details-wide">
                                 <p><b>Full Event Title:</b> ${
@@ -121,15 +125,21 @@
 
                             <!-- DYNAMIC BOOK/CANCEL BUTTON -->
                             <button 
-                                class="${isBooked ? "cancel-button" : "book-button"}"
-                                onclick="${isBooked ? `cancelBooking('${event._id}')` : `makeBooking('${event._id}')`}; event.stopPropagation();">
+                                class="${
+                                    isBooked ? "cancel-button" : "book-button"
+                                }"
+                                onclick="${
+                                    isBooked
+                                        ? `cancelBooking('${event._id}')`
+                                        : `makeBooking('${event._id}')`
+                                }; event.stopPropagation();">
                                 ${isBooked ? "Cancel Booking" : "Book Event"}
                             </button>
                         </div>
                     `;
 
-                    eventDiv.onclick = () => toggleEvent(eventDiv);
-                    eventsSection.appendChild(eventDiv);
+                    eventDiv.onclick = () => toggleEvent(eventDiv); // Creates the click detector
+                    eventsSection.appendChild(eventDiv); // Adds the new event div to the event section
                 }
             }
 
