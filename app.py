@@ -70,6 +70,31 @@ def get_all_events():
 
 
 
+@app.get("/events/<event_id>")
+def get_single_event(event_id):
+    try:
+        event = events.find_one({"_id": ObjectId(event_id)})
+    except:
+        return "Invalid event ID", 400
+
+    if not event:
+        return "Event not found", 404
+
+    # Convert ObjectId to string for JSON
+    event["_id"] = str(event["_id"])
+
+    # Convert booked_users ObjectIds to strings (important)
+    if "booked_users" in event:
+        event["booked_users"] = [str(uid) for uid in event["booked_users"]]
+
+    return jsonify(event), 200
+    
+
+
+# ======================
+# Event Login system 
+# ======================
+
 @app.post("/login")
 def login():
     username = request.form.get("username", "").strip()
