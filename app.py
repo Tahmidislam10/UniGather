@@ -167,13 +167,13 @@ def cancel_booking():
     # Remove event from user's bookings
     users.update_one(
         {"_id": ObjectId(user_id)},
-        {"$pull": {"booked_events": event_id}}
+        {"$pull": {"booked_events": ObjectId(event_id)}}
     )
 
     # Remove user from event's booked users
     events.update_one(
         {"_id": ObjectId(event_id)},
-        {"$pull": {"booked_users": user_id}}
+        {"$pull": {"booked_users": ObjectId(user_id)}}
     )
 
     return "Booking cancelled", 200
