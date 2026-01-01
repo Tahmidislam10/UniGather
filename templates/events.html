@@ -106,7 +106,14 @@
                                     <p><b>Host Email:</b> ${
                                         event.host_email
                                     }</p>
-                                    <p><b>Capacity:</b> ${event.event_cap}</p>
+                                    <p><b>Availability:</b> ${
+                                        event.event_cap -
+                                        event.booked_users.length
+                                    }/${event.event_cap} ${
+                        event.booked_users.length < event.event_cap
+                            ? `<i>spaces remaining</i>`
+                            : `<i><b>fully booked</b></i>`
+                    }</p>
                                 </div>
 
                                 <div>
@@ -157,7 +164,8 @@
             function checkPermission(event) {
                 const role = getCookie("role");
 
-                if (role !== "staff") { // As of now, only staff can create events
+                // As of now, only staff can create events
+                if (role !== "staff") {
                     event.preventDefault();
                     alert("You must be logged in to create an event.");
                 }
@@ -182,7 +190,12 @@
             }
 
             async function cancelBooking(eventId) {
-                if (!confirm("Are you sure you want to cancel this booking?")) return;
+                if (
+                    !confirm(
+                        "Are you sure that you wish to cancel this booking?"
+                    )
+                )
+                    return;
 
                 try {
                     const res = await fetch("/cancel-booking", {
