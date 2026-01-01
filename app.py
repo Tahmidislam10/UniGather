@@ -35,10 +35,6 @@ def about_page():
 def login_page():
     return render_template("login.html")
 
-# ======================
-# API ROUTES (JSON)
-# ======================
-
 @app.get("/events")
 def get_all_events():
     response = events_table.scan()
@@ -78,7 +74,16 @@ def login():
     response = make_response(redirect("/events-page"))
     response.set_cookie("user_id", user["id"]) # DynamoDB uses 'id' string, not '_id' ObjectId
     response.set_cookie("role", user["role"])
+    response.set_cookie("username", user["username"]) # Added this
+    return response
 
+@app.route("/logout")
+def logout():
+    response = make_response(redirect("/"))
+    # Clear all auth cookies
+    response.set_cookie("user_id", "", expires=0)
+    response.set_cookie("role", "", expires=0)
+    response.set_cookie("username", "", expires=0)
     return response
 
 # ======================
@@ -213,6 +218,79 @@ def create_event():
         "message": "Event created successfully",
         "event_id": event_id
     }, 201
+
+import uuid
+
+# --- Page Route ---
+@app.route("/register")
+def register_page():
+    return render_template("register.html")
+
+# --- API Route: Register ---
+@app.post("/register")
+def register():
+    username = request.form.get("username", "").strip()
+    password = request.form.get("password", "").strip()
+    email = request.form.get("email", "").strip().lower()
+
+    # 1. Validation: Required fields
+    if not username or not password or not email:
+        return "All fields are required", 400
+
+    # 2. Validation: Email domain check
+    if not email.endswith("@city.ac.uk"):
+        return "Registration restricted to @city.ac.uk emails", 403
+
+    # 3. Check if username already exists
+    existing_user = users_table.scan(
+        FilterExpression=Attr("username").eq(username)
+    )
+    if existing_user.get("Items"):
+        return "Username already taken", 400
+
+    # 4. Save new user to DynamoDB
+    user_id = str(uuid.uuid4())
+    new_user = {
+        "id": user_id,
+        "username": username,
+        "password": password, # Keeping plain text as previously agreed
+        "email": email,
+        "role": "student",    # Default role
+        "booked_events": []
+    }
+
+    try:
+        users_table.put_item(Item=new_user)
+        return redirect("/login")
+    except Exception as e:
+        print(f"Registration Error: {e}")
+        return "Error saving user", 500
+
+# --- API Route: Promote to Staff ---
+@app.post("/promote-user")
+def promote_user():
+    # Only staff can promote others
+    requester_role = request.cookies.get("role")
+    if requester_role != "staff":
+        return "Unauthorized: Only staff can promote users", 403
+
+    data = request.get_json()
+    target_user_id = data.get("userId")
+
+    if not target_user_id:
+        return "Missing User ID", 400
+
+    try:
+        users_table.update_item(
+            Key={"id": target_user_id},
+            UpdateExpression="SET #r = :s",
+            ExpressionAttributeNames={"#r": "role"},
+            ExpressionAttributeValues={":s": "staff"}
+        )
+        return "User promoted to staff successfully", 200
+    except Exception as e:
+        print(f"Promotion Error: {e}")
+        return "Failed to promote user", 500
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
