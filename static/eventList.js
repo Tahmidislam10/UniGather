@@ -113,12 +113,30 @@ function displayEvents(events, expandedEventsIds = []) {
                                 }; event.stopPropagation();">
                                 ${isBooked ? "Cancel Booking" : "Book Event"}
                             </button>
+
+                             <!-- DOWNLOAD PDF BUTTON -->
+                            ${
+                                isBooked
+                                    ? `
+                                <button 
+                                    class="download-button"
+                                    onclick="downloadBooking('${event.id}'); event.stopPropagation();">
+                                    Download Booking (PDF)
+                                </button>
+                            `
+                                    : ``
+                            }
                         </div>
                     `;
 
         eventDiv.onclick = () => eventDiv.classList.toggle("toggled"); // Detects click and expands/collapses the event details
         eventsSection.appendChild(eventDiv); // Adds the new event div to the event section
     }
+}
+
+// Downloads booking confirmation PDF
+function downloadBooking(eventId) {
+    window.location.href = `/booking-confirmation/${eventId}`;
 }
 
 // Fetches the requested cookie
