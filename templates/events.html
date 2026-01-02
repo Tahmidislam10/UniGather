@@ -63,7 +63,7 @@
                 const expandedEventsIds = [];
                 for (const event of expandedEvents)
                     expandedEventsIds.push(event.getAttribute("data-eventId")); // Obtains the event IDs
-                
+
                 return expandedEventsIds;
             }
 
@@ -81,7 +81,10 @@
 
             // Searches current event list - intentionally does not call for up-to-date events list
             function searchEvents() {
-                const searchInput = document.getElementById("search-input").value.toLowerCase().trim();
+                const searchInput = document
+                    .getElementById("search-input")
+                    .value.toLowerCase()
+                    .trim();
 
                 // For empty searches, display unsearched list of events
                 if (searchInput === "") {
@@ -91,7 +94,7 @@
 
                 const filteredEvents = allEvents.filter(function (event) {
                     return event.event_name.toLowerCase().includes(searchInput);
-                }) // Filters out events not including the search input
+                }); // Filters out events not including the search input
                 displayEvents(filteredEvents, getExpandedEventIds());
             }
 
@@ -184,7 +187,8 @@
                         </div>
                     `;
 
-                    eventDiv.onclick = () => eventDiv.classList.toggle("toggled"); // Detects click and expands/collapses the event details
+                    eventDiv.onclick = () =>
+                        eventDiv.classList.toggle("toggled"); // Detects click and expands/collapses the event details
                     eventsSection.appendChild(eventDiv); // Adds the new event div to the event section
                 }
             }
