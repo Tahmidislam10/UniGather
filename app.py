@@ -231,20 +231,6 @@ def register():
         print(f"Registration Error: {e}")
         return "Error saving user", 500
 
-@app.get("/events")
-def get_all_events():
-    response = events_table.scan()
-    items = response.get("Items", [])
-    items.sort(key=lambda x: x.get("created_at", ""), reverse=True)
-
-    for item in items:
-        if "booked_users" in item and isinstance(item["booked_users"], set):
-            item["booked_users"] = list(item["booked_users"])
-        else:
-            item["booked_users"] = []
-            
-    return jsonify(items), 200
-
 # ======================
 # Event Booking system
 # ======================
