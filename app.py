@@ -1,8 +1,14 @@
 import uuid
-from flask import Flask, request, jsonify, render_template, make_response, redirect
-from db import get_db 
+from flask import Flask, request, jsonify, render_template, make_response, redirect, send_file
+from db import get_db
 from datetime import datetime
 from boto3.dynamodb.conditions import Key, Attr
+from dateutil import parser
+
+from io import BytesIO
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.utils import ImageReader
 
 app = Flask(__name__)
 
@@ -41,6 +47,117 @@ def login_page():
 
 # ======================
 # API ROUTES (JSON/Auth)
+# ======================
+
+@app.get("/events")
+def get_all_events():
+    response = events_table.scan()
+    items = response.get("Items", [])
+
+    items.sort(key=lambda x: x.get("created_at", ""), reverse=True)
+
+    for item in items:
+        # Existing: booked users
+        if "booked_users" in item and isinstance(item["booked_users"], set):
+            item["booked_users"] = list(item["booked_users"])
+        else:
+            item["booked_users"] = []
+
+        # waitlist users
+        if "waitlist_users" in item and isinstance(item["waitlist_users"], set):
+            item["waitlist_users"] = list(item["waitlist_users"])
+        else:
+            item["waitlist_users"] = []
+
+    return jsonify(items), 200
+
+
+
+
+@app.get("/events/<event_id>")
+def get_single_event(event_id):
+    response = events_table.get_item(Key={"id": event_id})
+    event = response.get("Item")
+
+    if not event:
+        return "Event not found", 404
+
+    # Convert DynamoDB sets → lists for JSON
+    if "booked_users" in event and isinstance(event["booked_users"], set):
+        event["booked_users"] = list(event["booked_users"])
+
+    return jsonify(event), 200
+
+
+@app.get("/reminders")
+def get_reminders():
+    user_id = request.cookies.get("user_id")
+
+    if not user_id:
+        return "Not logged in", 401
+
+    # Fetch user
+    user_res = users_table.get_item(Key={"id": user_id})
+    user = user_res.get("Item")
+
+    if not user:
+        return "User not found", 404
+
+    booked_event_ids = user.get("booked_events", set())
+
+    if not booked_event_ids:
+        return jsonify([]), 200
+
+    reminders = []
+
+    # Fetch each booked event
+    for event_id in booked_event_ids:
+        event_res = events_table.get_item(Key={"id": event_id})
+        event = event_res.get("Item")
+
+        if event:
+            reminders.append(event)
+
+    # Sort by soonest upcoming event
+    reminders.sort(
+        key=lambda e: f"{e.get('event_date', '')} {e.get('event_time', '')}"
+    )
+
+    return jsonify(reminders), 200
+
+@app.get("/booking-confirmation/<event_id>")
+def download_booking_confirmation(event_id):
+    user_id = request.cookies.get("user_id")
+
+    if not user_id:
+        return "Not logged in", 401
+
+    user_res = users_table.get_item(Key={"id": user_id})
+    event_res = events_table.get_item(Key={"id": event_id})
+
+    user = user_res.get("Item")
+    event = event_res.get("Item")
+
+    if not user or not event:
+        return "Invalid booking", 404
+
+    # Check user is actually booked
+    booked_users = event.get("booked_users", set())
+    if user_id not in booked_users:
+        return "You are not booked for this event", 403
+
+    pdf_buffer = generate_booking_pdf(user, event)
+
+    return send_file(
+        pdf_buffer,
+        as_attachment=True,
+        download_name=f"booking_{event_id}.pdf",
+        mimetype="application/pdf"
+    )
+
+
+# ======================
+# Event Login system 
 # ======================
 
 @app.post("/login")
@@ -161,8 +278,22 @@ def book_event():
     booked_users = event.get("booked_users", set())
     capacity = int(event.get("event_cap", 0))
 
+    waitlist = event.get("waitlist_users", set())
+
+    # === WAITLIST LOGIC ===
     if len(booked_users) >= capacity:
-        return "Event is full", 400
+        if user_id in waitlist:
+            return "You are already on the waitlist", 400
+
+        events_table.update_item(
+            Key={"id": event_id},
+            UpdateExpression="ADD waitlist_users :w",
+            ExpressionAttributeValues={":w": {user_id}}
+        )
+
+        return "Event is full. You have been added to the waitlist.", 200
+
+
 
     if user_id in booked_users:
         return "You have already booked this event", 400
@@ -192,6 +323,7 @@ def cancel_booking():
         return "Missing user or event", 400
 
     try:
+        # === EXISTING FUNCTIONALITY (DO NOT CHANGE) ===
         users_table.update_item(
             Key={"id": user_id},
             UpdateExpression="DELETE booked_events :e",
@@ -204,10 +336,131 @@ def cancel_booking():
             ExpressionAttributeValues={":u": {user_id}}
         )
 
+        # === NEW: AUTO-PROMOTE FROM WAITLIST ===
+        event_res = events_table.get_item(Key={"id": event_id})
+        event = event_res.get("Item")
+
+        if not event:
+            return "Booking cancelled successfully", 200
+
+        booked_users = event.get("booked_users", set())
+        waitlist_users = event.get("waitlist_users", set())
+        capacity = int(event.get("event_cap", 0))
+
+        if waitlist_users and len(booked_users) < capacity:
+            next_user = next(iter(waitlist_users))
+
+            # Remove user from waitlist
+            events_table.update_item(
+                Key={"id": event_id},
+                UpdateExpression="DELETE waitlist_users :w",
+                ExpressionAttributeValues={":w": {next_user}}
+            )
+
+            # Add user to booked_users
+            events_table.update_item(
+                Key={"id": event_id},
+                UpdateExpression="ADD booked_users :u",
+                ExpressionAttributeValues={":u": {next_user}}
+            )
+
+            # Add event to user's booked_events
+            users_table.update_item(
+                Key={"id": next_user},
+                UpdateExpression="ADD booked_events :e",
+                ExpressionAttributeValues={":e": {event_id}}
+            )
+
         return "Booking cancelled successfully", 200
+
     except Exception as e:
         print(f"Cancel error: {e}")
         return "Failed to cancel booking", 500
+
+
+#create PDF  genertion system 
+
+def generate_booking_pdf(user, event):
+    buffer = BytesIO()
+    c = canvas.Canvas(buffer, pagesize=A4)
+    width, height = A4
+
+    # === LOGO (BIGGER) ===
+    logo_path = "static/logo.png"
+    logo = ImageReader(logo_path)
+
+    logo_width = 180
+    logo_height = 180
+
+    c.drawImage(
+        logo,
+        (width - logo_width) / 2,   # center horizontally
+        height - 220,               # move up for larger logo
+        width=logo_width,
+        height=logo_height,
+        mask="auto"
+    )
+
+    # Header
+    c.setFont("Helvetica-Bold", 22)
+    c.drawCentredString(
+        width / 2,
+        height - 280,
+        "UniGather Booking Confirmation"
+    )
+
+    # Divider
+    c.setLineWidth(1)
+    c.line(50, height - 300, width - 50, height - 300)
+
+    # Event details
+    y = height - 350
+    c.setFont("Helvetica", 12)
+
+    details = [
+        ("Event Name", event["event_name"]),
+        ("Date", event["event_date"]),
+        ("Time", event["event_time"]),
+        ("Location", event["event_loc"]),
+        ("Booked By", user["username"]),
+        ("Booking ID", event["id"]),
+    ]
+
+    for label, value in details:
+        c.setFont("Helvetica-Bold", 12)
+        c.drawString(70, y, f"{label}:")
+        c.setFont("Helvetica", 12)
+        c.drawString(200, y, str(value))
+        y -= 30
+
+    # Footer message
+    c.setFont("Helvetica-Oblique", 11)
+    c.drawString(
+        70,
+        y - 20,
+        "Please present this confirmation at the event entrance."
+    )
+
+    # Footer text
+    c.setFont("Helvetica", 9)
+    c.drawCentredString(
+        width / 2,
+        40,
+        "Generated by UniGather • IN3046 Cloud Computing Project"
+    )
+
+    c.showPage()
+    c.save()
+
+    buffer.seek(0)
+    return buffer
+
+
+
+
+# ======================
+# FORM SUBMISSION
+# ======================
 
 @app.post("/create/submit-event")
 def create_event():

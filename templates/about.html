@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <title>Home - UniGather</title>
+        <title>Home</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="stylesheet" href="/static/style.css" />
     </head>
@@ -24,9 +24,7 @@
                     <li><a href="/events-page">Events</a></li>
                     
                     <li id="nav-login"><a href="/login">Login / Register</a></li>
-                    
                     <li id="nav-create" style="display: none;"><a href="/create">Create Event</a></li>
-                    
                     <li id="nav-admin" style="display: none;"><a href="/admin">Admin</a></li>
                 </ul>
             </nav>
@@ -35,7 +33,7 @@
         <main>
             <section>
                 <h2>Welcome to UniGather</h2>
-                <p>Centralized event management for university staff and students.</p>
+                <p>Centralised event management for university staff and students.</p>
             </section>
         </main>
 
@@ -64,14 +62,14 @@
 
                 // Check if user is logged in
                 if (username && username !== "") {
-                    // 1. Show welcome message and set name
+                    // Show welcome message and set name
                     if (userStatusDiv) userStatusDiv.style.display = "block";
                     if (displayUsername) displayUsername.innerText = decodeURIComponent(username);
 
-                    // 2. Hide Login link (user is already authenticated)
+                    // Hide Login link (user is already authenticated)
                     if (loginNavItem) loginNavItem.style.display = "none";
 
-                    // 3. Show Staff-only navigation links
+                    // Show Staff-only navigation links
                     if (role === "staff") {
                         if (createNavItem) createNavItem.style.display = "block";
                         if (adminNavItem) adminNavItem.style.display = "block";

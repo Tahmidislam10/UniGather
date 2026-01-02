@@ -51,7 +51,7 @@
             <section class="form-section">
                 <h2>Event Creation Form</h2>
 
-                <form id="create-event-form">
+                <form class="create-event-form">
                     <div class="form-field-normal">
                         <label>Host Name:</label>
                         <input type="text" name="host_name" required />
@@ -103,32 +103,6 @@
             <h2>IN3046 Cloud Computing - Coursework Project</h2>
         </footer>
 
-        <script>
-            async function createEvent(event) {
-                event.preventDefault();
-
-                const form = event.target;
-                const formData = new FormData(form);
-
-                try {
-                    const response = await fetch("/create/submit-event", {
-                        method: "POST",
-                        body: formData
-                    });
-
-                    if (response.ok) {
-                        alert("Event created successfully!");
-                        window.location.href = "/events-page";
-                    } else {
-                        alert(await response.text());
-                    }
-                } catch (err) {
-                    console.error("Event Submission Error: ", err);
-                    alert("Event Submission Error.");
-                }
-            }
-
-            document.getElementById("create-event-form").addEventListener("submit", createEvent);
-        </script>
+        <script src="/static/createEvent.js"></script>
     </body>
 </html>

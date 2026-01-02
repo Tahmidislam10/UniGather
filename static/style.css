@@ -84,15 +84,6 @@ ol {
     color: #ffffff;
 }
 
-.search-events {
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-.search-events input {
-    width: 80%;
-}
-
 /* Form Styling */
 
 .form-section {
@@ -131,7 +122,21 @@ ol {
     margin-top: 30px;
 }
 
-/* Events List Styling */
+/* Search Styling */
+
+.search-events {
+    display: flex;
+    gap: 10px;
+    max-width: 800px;
+    margin: 20px auto;
+}
+
+.search-events input {
+    flex-grow: 1;
+    width: 100%;
+}
+
+/* Events Styling */
 
 #events-list {
     display: flex;
@@ -214,43 +219,6 @@ ol {
     transform: rotate(180deg);
 }
 
-/* In static/style.css */
-
-header {
-    position: relative; /* Allows absolute positioning of children */
-    background-color: #d61726;
-    color: #ffffff;
-    padding: 15px;
-    text-align: center;
-}
-
-.user-status {
-    position: absolute;
-    top: 10px;
-    right: 20px;
-    text-align: right;
-    font-size: 0.9em;
-}
-
-.user-status p {
-    margin: 0;
-    font-weight: bold;
-}
-
-.logout-link {
-    color: #ffffff;
-    text-decoration: underline;
-    font-size: 0.85em;
-    display: block; /* Forces it below the 'Welcome' text */
-    margin-top: 5px;
-}
-
-.logout-link:hover {
-    color: #eeeeee;
-}
-
-/* In static/style.css */
-
 header {
     background-color: #d61726;
     color: #ffffff;
@@ -281,5 +249,11 @@ header {
 }
 
 .logout-link:hover {
-    color: #1e1e1e; /* Match footer/active link color on hover */
+    color: #1e1e1e; 
+}
+
+.waitlist-button {
+    background-color: #1e1e1e;
+    color: #ffffff;
+    cursor: not-allowed;
 }

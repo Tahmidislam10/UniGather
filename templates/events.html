@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <title>Events - UniGather</title>
+        <title>Events</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="stylesheet" href="/static/style.css" />
     </head>
@@ -30,20 +30,25 @@
         <main>
             <section>
                 <br />
-                <a href="/create" class="button" id="create-event-button" style="display: none;"
+                <a href="/create" class="button" id="create-event-button"
                     >Create event</a
                 >
 
-                <br /><br />
-                <form class="search-events">
+                <form
+                    class="search-events"
+                    onsubmit="event.preventDefault(); searchEvents(allEvents);"
+                >
                     <input
                         type="search"
+                        id="search-input"
                         placeholder="Search for an event title..."
                     />
                     <button type="submit">Search</button>
+                    <button type="button" onclick="getEvents()">Refresh</button>
                 </form>
             </section>
 
+            <!-- EVENTS RENDER HERE -->
             <section id="events-list"></section>
         </main>
 
@@ -51,92 +56,7 @@
             <h2>IN3046 Cloud Computing - Coursework Project</h2>
         </footer>
 
-<script>
-    let allEvents = [];
-
-    function getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(';').shift();
-        return null;
-    }
-
-    document.addEventListener("DOMContentLoaded", function() {
-        const username = getCookie("username");
-        const role = getCookie("role");
-
-        // UI Logic
-        const userStatusDiv = document.getElementById("user-status");
-        const displayUsername = document.getElementById("display-username");
-        const loginNavItem = document.getElementById("nav-login");
-        const createButton = document.getElementById("create-event-button");
-        const adminNavItem = document.getElementById("nav-admin");
-
-        if (username) {
-            userStatusDiv.style.display = "block";
-            displayUsername.innerText = decodeURIComponent(username);
-            if (loginNavItem) loginNavItem.style.display = "none";
-            if (role === "staff") {
-                if (createButton) createButton.style.display = "inline-block";
-                if (adminNavItem) adminNavItem.style.display = "block";
-            }
-        }
-        
-        getEvents(); // Initialize event list
-    });
-
-    async function getEvents() {
-        try {
-            const res = await fetch("/events");
-            allEvents = await res.json();
-            displayEvents(allEvents);
-        } catch (err) {
-            console.error("Fetch error:", err);
-        }
-    }
-
-    function displayEvents(events) {
-        const container = document.getElementById("events-list");
-        container.innerHTML = "";
-        events.forEach(event => {
-            const div = document.createElement("div");
-            div.className = "event-item";
-            // Use event.id for DynamoDB compatibility
-            div.innerHTML = `
-                <div class="event-main">
-                    <h3>${event.event_name}</h3>
-                    <p>Host: ${event.host_name}</p>
-                    <span class="toggle-icon">▼</span>
-                </div>
-                <div class="event-details" onclick="event.stopPropagation()">
-                    <p>${event.event_desc}</p>
-                    <button class="button" onclick="bookEvent('${event.id}')">Book</button>
-                    <button class="button" onclick="cancelBooking('${event.id}')" style="background-color:#1e1e1e; color:white;">Cancel</button>
-                </div>
-            `;
-            div.onclick = () => div.classList.toggle("toggled");
-            container.appendChild(div);
-        });
-    }
-
-    async function bookEvent(eventId) {
-        const res = await fetch("/book-event", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ eventId })
-        });
-        alert(await res.text());
-    }
-
-    async function cancelBooking(eventId) {
-        const res = await fetch("/cancel-booking", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ eventId })
-        });
-        alert(await res.text());
-        getEvents();
-    }
-</script>
+        <script src="/static/eventList.js"></script>
+        <script src="/static/events.js"></script>
     </body>
 </html>
