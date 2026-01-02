@@ -84,15 +84,6 @@ ol {
     color: #ffffff;
 }
 
-.search-events {
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-.search-events input {
-    width: 80%;
-}
-
 /* Form Styling */
 
 .form-section {
@@ -131,7 +122,21 @@ ol {
     margin-top: 30px;
 }
 
-/* Events List Styling */
+/* Search Styling */
+
+.search-events {
+    display: flex;
+    gap: 10px;
+    max-width: 800px;
+    margin: 20px auto;
+}
+
+.search-events input {
+    flex-grow: 1;
+    width: 100%;
+}
+
+/* Events Styling */
 
 #events-list {
     display: flex;
