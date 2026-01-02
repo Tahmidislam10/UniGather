@@ -184,13 +184,9 @@
                         </div>
                     `;
 
-                    eventDiv.onclick = () => toggleEvent(eventDiv); // Creates the click detector
+                    eventDiv.onclick = () => eventDiv.classList.toggle("toggled"); // Detects click and expands/collapses the event details
                     eventsSection.appendChild(eventDiv); // Adds the new event div to the event section
                 }
-            }
-
-            function toggleEvent(event) {
-                event.classList.toggle("toggled"); // Expands/collapses the event details
             }
 
             function getCookie(name) {
