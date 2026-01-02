@@ -9,7 +9,7 @@
 
     <body>
         <header>
-            <div id="user-status" class="user-status" style="display: none;">
+            <div id="user-status" class="user-status" style="display: none">
                 <p>Welcome, <span id="display-username"></span></p>
                 <a href="/logout" class="logout-link">Logout</a>
             </div>
@@ -22,10 +22,16 @@
                     <li><a href="/" class="active">Home</a></li>
                     <li><a href="/about">About Us</a></li>
                     <li><a href="/events-page">Events</a></li>
-                    
-                    <li id="nav-login"><a href="/login">Login / Register</a></li>
-                    <li id="nav-create" style="display: none;"><a href="/create">Create Event</a></li>
-                    <li id="nav-admin" style="display: none;"><a href="/admin">Admin</a></li>
+
+                    <li id="nav-login">
+                        <a href="/login">Login / Register</a>
+                    </li>
+                    <li id="nav-create" style="display: none">
+                        <a href="/create">Create Event</a>
+                    </li>
+                    <li id="nav-admin" style="display: none">
+                        <a href="/admin">Admin</a>
+                    </li>
                 </ul>
             </nav>
         </header>
@@ -33,7 +39,10 @@
         <main>
             <section>
                 <h2>Welcome to UniGather</h2>
-                <p>Centralised event management for university staff and students.</p>
+                <p>
+                    Centralised event management for university staff and
+                    students.
+                </p>
             </section>
         </main>
 
@@ -46,16 +55,17 @@
             function getCookie(name) {
                 const value = `; ${document.cookie}`;
                 const parts = value.split(`; ${name}=`);
-                if (parts.length === 2) return parts.pop().split(';').shift();
+                if (parts.length === 2) return parts.pop().split(";").shift();
                 return null;
             }
 
-            document.addEventListener("DOMContentLoaded", function() {
+            document.addEventListener("DOMContentLoaded", function () {
                 const username = getCookie("username");
                 const role = getCookie("role");
 
                 const userStatusDiv = document.getElementById("user-status");
-                const displayUsername = document.getElementById("display-username");
+                const displayUsername =
+                    document.getElementById("display-username");
                 const loginNavItem = document.getElementById("nav-login");
                 const createNavItem = document.getElementById("nav-create");
                 const adminNavItem = document.getElementById("nav-admin");
@@ -64,14 +74,17 @@
                 if (username && username !== "") {
                     // Show welcome message and set name
                     if (userStatusDiv) userStatusDiv.style.display = "block";
-                    if (displayUsername) displayUsername.innerText = decodeURIComponent(username);
+                    if (displayUsername)
+                        displayUsername.innerText =
+                            decodeURIComponent(username);
 
                     // Hide Login link (user is already authenticated)
                     if (loginNavItem) loginNavItem.style.display = "none";
 
                     // Show Staff-only navigation links
                     if (role === "staff") {
-                        if (createNavItem) createNavItem.style.display = "block";
+                        if (createNavItem)
+                            createNavItem.style.display = "block";
                         if (adminNavItem) adminNavItem.style.display = "block";
                     }
                 } else {
