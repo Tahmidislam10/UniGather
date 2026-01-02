@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Portal - UniGather</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <div id="user-status" class="user-status">
+            <p>Welcome, <span id="display-username"></span></p>
+            <a href="/logout" class="logout-link">Logout</a>
+        </div>
+        <h1>UniGather Admin</h1>
+        <nav>
+            <ul class="header-nav">
+                <li><a href="/">Home</a></li>
+                <li><a href="/events-page">Events</a></li>
+                <li><a href="/admin" class="active">Admin</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <h2>User Role Management</h2>
+        <table style="width:100%; border-collapse: collapse; margin-top: 20px; text-align: left;">
+            <thead>
+                <tr style="background-color: #d61726; color: white;">
+                    <th style="padding: 10px; border: 1px solid #ddd;">Username</th>
+                    <th style="padding: 10px; border: 1px solid #ddd;">Email</th>
+                    <th style="padding: 10px; border: 1px solid #ddd;">Current Role</th>
+                    <th style="padding: 10px; border: 1px solid #ddd;">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="user-table-body">
+                </tbody>
+        </table>
+    </main>
+
+    <script>
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+
+        async function loadUsers() {
+            const res = await fetch("/api/users");
+            const users = await res.json();
+            const tbody = document.getElementById("user-table-body");
+            tbody.innerHTML = "";
+
+            users.forEach(user => {
+                const row = document.createElement("tr");
+                let actionBtn = "";
+
+                if (user.role === "student") {
+                    actionBtn = `<button class="button" onclick="changeRole('${user.id}', 'staff')">Promote to Staff</button>`;
+                } else if (user.role === "staff") {
+                    actionBtn = `<button class="button" onclick="changeRole('${user.id}', 'student')" style="background-color: #1e1e1e; color: white;">Demote to Student</button>`;
+                } else {
+                    actionBtn = "<em>Admin (Protected)</em>";
+                }
+
+                row.innerHTML = `
+                    <td style="padding: 10px; border: 1px solid #ddd;">${user.username}</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">${user.email}</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;"><strong>${user.role}</strong></td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">${actionBtn}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        async function changeRole(userId, newRole) {
+            if (!confirm(`Are you sure you want to change this user's role to ${newRole}?`)) return;
+
+            const res = await fetch("/update-role", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userId: userId, newRole: newRole })
+            });
+
+            if (res.ok) {
+                alert("Role updated successfully!");
+                loadUsers(); // Refresh table
+            } else {
+                alert(await res.text());
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const username = getCookie("username");
+            if (username) {
+                document.getElementById("display-username").innerText = decodeURIComponent(username);
+            }
+            loadUsers();
+        });
+    </script>
+</body>
+</html>

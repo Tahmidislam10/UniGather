@@ -2,58 +2,83 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <title>About Us</title>
+        <title>Home</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="stylesheet" href="/static/style.css" />
     </head>
 
     <body>
         <header>
+            <div id="user-status" class="user-status" style="display: none;">
+                <p>Welcome, <span id="display-username"></span></p>
+                <a href="/logout" class="logout-link">Logout</a>
+            </div>
+
             <h1>UniGather</h1>
-            <p>About us</p>
+            <p>An event management system</p>
 
             <nav>
                 <ul class="header-nav">
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/about" class="active">About Us</a></li>
+                    <li><a href="/" class="active">Home</a></li>
+                    <li><a href="/about">About Us</a></li>
                     <li><a href="/events-page">Events</a></li>
-                    <li><a href="/login">Login / Register</a></li>
+                    
+                    <li id="nav-login"><a href="/login">Login / Register</a></li>
+                    <li id="nav-create" style="display: none;"><a href="/create">Create Event</a></li>
+                    <li id="nav-admin" style="display: none;"><a href="/admin">Admin</a></li>
                 </ul>
             </nav>
         </header>
 
         <main>
             <section>
-                <h2>Lorem Ipsum</h2>
-                <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    Mauris eu lacus ultrices, suscipit ex non, varius tellus.
-                    Proin venenatis massa eros, quis tempor nunc egestas vitae.
-                    Integer vel nibh ac purus elementum posuere. Fusce finibus
-                    nulla ac sapien maximus pellentesque. Ut faucibus sodales
-                    ullamcorper.
-                </p>
-
-                <p>
-                    Nulla felis dui, faucibus vel viverra a, dignissim molestie
-                    dui. Aliquam mattis risus in augue lobortis, nec pulvinar
-                    nunc cursus. Vestibulum ante ipsum primis in faucibus orci
-                    luctus et ultrices posuere cubilia curae; Sed malesuada urna
-                    at est tristique euismod.
-                </p>
-
-                <p>
-                    Proin commodo ligula erat, nec consequat diam interdum id.
-                    Integer neque justo, dapibus interdum rutrum sit amet,
-                    ultricies vel metus. Aenean iaculis, lectus eget tempus
-                    bibendum, magna velit suscipit massa, eu faucibus leo lacus
-                    at justo.
-                </p>
+                <h2>Welcome to UniGather</h2>
+                <p>Centralised event management for university staff and students.</p>
             </section>
         </main>
 
         <footer>
             <h2>IN3046 Cloud Computing - Coursework Project</h2>
         </footer>
+
+        <script>
+            // Helper function to read a cookie value by name
+            function getCookie(name) {
+                const value = `; ${document.cookie}`;
+                const parts = value.split(`; ${name}=`);
+                if (parts.length === 2) return parts.pop().split(';').shift();
+                return null;
+            }
+
+            document.addEventListener("DOMContentLoaded", function() {
+                const username = getCookie("username");
+                const role = getCookie("role");
+
+                const userStatusDiv = document.getElementById("user-status");
+                const displayUsername = document.getElementById("display-username");
+                const loginNavItem = document.getElementById("nav-login");
+                const createNavItem = document.getElementById("nav-create");
+                const adminNavItem = document.getElementById("nav-admin");
+
+                // Check if user is logged in
+                if (username && username !== "") {
+                    // Show welcome message and set name
+                    if (userStatusDiv) userStatusDiv.style.display = "block";
+                    if (displayUsername) displayUsername.innerText = decodeURIComponent(username);
+
+                    // Hide Login link (user is already authenticated)
+                    if (loginNavItem) loginNavItem.style.display = "none";
+
+                    // Show Staff-only navigation links
+                    if (role === "staff") {
+                        if (createNavItem) createNavItem.style.display = "block";
+                        if (adminNavItem) adminNavItem.style.display = "block";
+                    }
+                } else {
+                    // Ensure Login / Register is visible if NOT logged in
+                    if (loginNavItem) loginNavItem.style.display = "block";
+                }
+            });
+        </script>
     </body>
 </html>

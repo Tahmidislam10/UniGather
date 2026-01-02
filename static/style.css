@@ -219,8 +219,41 @@ ol {
     transform: rotate(180deg);
 }
 
+header {
+    background-color: #d61726;
+    color: #ffffff;
+    padding: 15px;
+    position: relative; /* Added to allow absolute positioning of children */
+}
+
+.user-status {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    text-align: right;
+    font-size: 0.9em;
+}
+
+.user-status p {
+    margin: 0;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.logout-link {
+    color: #ffffff;
+    text-decoration: underline;
+    font-size: 0.8em;
+    display: inline-block;
+    margin-top: 4px;
+}
+
+.logout-link:hover {
+    color: #1e1e1e; 
+}
+
 .waitlist-button {
-    background-color: #888;
-    color: white;
+    background-color: #1e1e1e;
+    color: #ffffff;
     cursor: not-allowed;
 }

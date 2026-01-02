@@ -1,18 +1,22 @@
-# Use a lightweight Python image
 FROM python:3.12-slim
 
-# Set working directory
+# Prevent Python from writing .pyc files and enable unbuffered logging
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
 WORKDIR /app
 
-# Copy requirements and install
+# Create a non-privileged user for security
+RUN adduser --disabled-password --gecos "" appuser
+
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the app code
 COPY . .
 
-# Expose the port Flask runs on
+# Switch to the non-root user
+USER appuser
+
 EXPOSE 5000
 
-# Start the app with Gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "2", "app:app"]

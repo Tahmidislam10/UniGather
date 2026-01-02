@@ -12,6 +12,8 @@ def seed_data():
             "username": "admin1",
             "password": generate_password_hash("admin123"),
             "role": "admin"
+            # booked_events is omitted; DynamoDB will create the set 
+            # automatically the first time they book an event.
         }
     ]
 
