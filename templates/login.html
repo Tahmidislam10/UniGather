@@ -1,91 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Login / Register</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/style.css">
-</head>
-<body>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Login / Register</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="/static/style.css" />
+    </head>
+    <body>
+        <header>
+            <div id="user-status" class="user-status" style="display: none">
+                <p>Welcome, <span id="display-username"></span></p>
+                <a href="/logout" class="logout-link">Logout</a>
+            </div>
 
-<header>
-    <div id="user-status" class="user-status" style="display: none;">
-        <p>Welcome, <span id="display-username"></span></p>
-        <a href="/logout" class="logout-link">Logout</a>
-    </div>
+            <h1>UniGather</h1>
+            <p>An event management system</p>
 
-    <h1>UniGather</h1>
-    <p>An event management system</p>
+            <nav>
+                <ul class="header-nav">
+                    <li><a href="/" class="active">Home</a></li>
+                    <li><a href="/about">About Us</a></li>
+                    <li><a href="/events-page">Events</a></li>
+                    <li><a href="/login">Login / Register</a></li>
+                </ul>
+            </nav>
+        </header>
 
-    <nav>
-        <ul class="header-nav">
-            <li><a href="/" class="active">Home</a></li>
-            <li><a href="/about">About Us</a></li>
-            <li><a href="/events-page">Events</a></li>
-            <li><a href="/login">Login / Register</a></li>
-        </ul>
-    </nav>
-</header>
+        <script>
+            // Function to retrieve specific cookie values
+            function getCookie(name) {
+                const value = `; ${document.cookie}`;
+                const parts = value.split(`; ${name}=`);
+                if (parts.length === 2) return parts.pop().split(";").shift();
+            }
 
-<script>
-    // Function to retrieve specific cookie values
-    function getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(';').shift();
-    }
+            // Logic to update the UI based on auth cookies
+            window.onload = function () {
+                const username = getCookie("username");
+                const userStatusDiv = document.getElementById("user-status");
+                const displayUsername =
+                    document.getElementById("display-username");
+                const loginNavItem = document.getElementById("nav-login");
 
-    // Logic to update the UI based on auth cookies
-    window.onload = function() {
-        const username = getCookie("username");
-        const userStatusDiv = document.getElementById("user-status");
-        const displayUsername = document.getElementById("display-username");
-        const loginNavItem = document.getElementById("nav-login");
+                if (username) {
+                    // User is logged in: show welcome message and hide login link
+                    userStatusDiv.style.display = "block";
+                    displayUsername.innerText = decodeURIComponent(username);
+                    if (loginNavItem) loginNavItem.style.display = "none";
+                }
+            };
+        </script>
 
-        if (username) {
-            // User is logged in: show welcome message and hide login link
-            userStatusDiv.style.display = "block";
-            displayUsername.innerText = decodeURIComponent(username);
-            if (loginNavItem) loginNavItem.style.display = "none";
-        }
-    }
-</script>
+        <main>
+            <section class="form-section">
+                <!-- Login / Register form will go here -->
 
-    <main>
-        <section class="form-section">
-            <!-- Login / Register form will go here -->
+                <form id="login-form">
+                    <div class="form-field-normal">
+                        <label>Username:</label>
+                        <input type="text" name="username" required />
+                    </div>
 
-            <form id="login-form">
-                <div class="form-field-normal">
-                    <label>Username:</label>
-                    <input type="text" name="username" required>
-                </div>
+                    <div class="form-field-normal">
+                        <label>Password:</label>
+                        <input type="password" name="password" required />
+                    </div>
 
-                <div class="form-field-normal">
-                    <label>Password:</label>
-                    <input type="password" name="password" required>
-                </div>
+                    <div class="form-actions">
+                        <button type="submit">Submit</button>
+                    </div>
+                </form>
+            </section>
 
-                <div class="form-actions">
-                    <button type="submit">Submit</button>
-                </div>
-            </form>
-        </section>
+            <section class="auth-section" style="text-align: center">
+                <h2>New to UniGather?</h2>
+                <p>Sign up with your @city.ac.uk email to join events.</p>
+                <br />
+                <a
+                    href="/register"
+                    class="button"
+                    style="display: block; background-color: #28a745"
+                    >Register New Account</a
+                >
+            </section>
+        </main>
 
-        <section class="auth-section" style="text-align: center;">
-            <h2>New to UniGather?</h2>
-            <p>Sign up with your @city.ac.uk email to join events.</p>
-            <br>
-            <a href="/register" class="button" style="display: block; background-color: #28a745;">Register New Account</a>
-        </section>
+        <footer>
+            <h2>IN3046 Cloud Computing - Coursework Project</h2>
+        </footer>
 
-    </main>
-
-    <footer>
-        <h2>IN3046 Cloud Computing - Coursework Project</h2>
-    </footer>
-
-    <script>
+        <script>
             async function login(event) {
                 event.preventDefault();
 
@@ -95,7 +99,7 @@
                 try {
                     const response = await fetch("/login", {
                         method: "POST",
-                        body: formData
+                        body: formData,
                     });
 
                     if (response.ok) {
@@ -110,7 +114,9 @@
                 }
             }
 
-            document.getElementById("login-form").addEventListener("submit", login);
+            document
+                .getElementById("login-form")
+                .addEventListener("submit", login);
         </script>
-</body>
+    </body>
 </html>
