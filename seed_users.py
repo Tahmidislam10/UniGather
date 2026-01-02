@@ -1,20 +1,17 @@
 import boto3
 from db import get_db
+from werkzeug.security import generate_password_hash
 
 def seed_data():
     db = get_db()
     users_table = db.Table("users")
 
-    # Your MongoDB data mapped to DynamoDB format
-    # Note: We use 'id' instead of '_id' to match your Terraform/App logic
     users_to_add = [
         {
             "id": "15322711a693dbefb3433533",
             "username": "admin1",
-            "password": "admin123",
+            "password": generate_password_hash("admin123"),
             "role": "admin"
-            # booked_events is omitted; DynamoDB will create the set 
-            # automatically the first time they book an event.
         }
     ]
 
@@ -29,5 +26,5 @@ def seed_data():
 
     print("Seeding complete!")
 
-if name == "main":
-    seed_data(
+if __name__ == "__main__":
+    seed_data()
