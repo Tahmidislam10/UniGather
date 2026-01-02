@@ -1,4 +1,4 @@
-let allEvents = [];
+let allEvents = []; // All events that could be displayed
 
 // Returns the event IDs of events currently expanded by the user
 function getExpandedEventIds() {
@@ -46,7 +46,8 @@ function displayEvents(events, expandedEventsIds = []) {
         const isBooked =
             event.booked_users && event.booked_users.includes(currentUserId); // Checks if current user has booked this event
         const isWaitlisted =
-            event.waitlist_users && event.waitlist_users.includes(currentUserId);
+            event.waitlist_users &&
+            event.waitlist_users.includes(currentUserId);
         const wasExpanded = expandedEventsIds.includes(event.id); // Checks if event was previously expanded by the user
         const eventDiv = document.createElement("div");
 
@@ -54,6 +55,7 @@ function displayEvents(events, expandedEventsIds = []) {
         eventDiv.setAttribute("data-eventId", event.id); // Stores event ID for future use
 
         // Writes the HTML. NOTE: HTML comments below do not appear as green within VSCode
+        // Formatted using "Prettier" VSCode Extension
         eventDiv.innerHTML = `
                         <!-- ALWAYS-VISIBLE EVENT SUMMARY/HEADER -->
                         <div class="event-main">

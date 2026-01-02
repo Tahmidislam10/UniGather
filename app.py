@@ -116,6 +116,17 @@ def get_reminders():
         event = event_res.get("Item")
 
         if event:
+            if "booked_users" in event and isinstance(event["booked_users"], set):
+                event["booked_users"] = list(event["booked_users"])
+            else:
+                event["booked_users"] = []
+
+            # waitlist users
+            if "waitlist_users" in event and isinstance(event["waitlist_users"], set):
+                event["waitlist_users"] = list(event["waitlist_users"])
+            else:
+                event["waitlist_users"] = []
+
             reminders.append(event)
 
     # Sort by soonest upcoming event
