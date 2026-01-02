@@ -50,6 +50,7 @@ function displayEvents(events, expandedEventsIds = []) {
             event.waitlist_users.includes(currentUserId);
         const wasExpanded = expandedEventsIds.includes(event.id); // Checks if event was previously expanded by the user
         const eventDiv = document.createElement("div");
+        
 
         eventDiv.className = wasExpanded ? "event-item toggled" : "event-item"; // Expands if previously expanded
         eventDiv.setAttribute("data-eventId", event.id); // Stores event ID for future use
@@ -105,30 +106,32 @@ function displayEvents(events, expandedEventsIds = []) {
                                 }</p>
                             </div>
 
-                            <!-- DYNAMIC BOOK/CANCEL BUTTON -->
-                            <button 
-                                class="${
-                                    isBooked
-                                        ? "cancel-button"
-                                        : isWaitlisted
-                                        ? "waitlist-button"
-                                        : "book-button"
-                                }"
-                                onclick="${
-                                    isBooked
-                                        ? `cancelBooking('${event.id}')`
-                                        : `makeBooking('${event.id}')`
-                                }; event.stopPropagation();"
-                                ${isWaitlisted ? "disabled" : ""}>
-
-                                ${
-                                    isBooked
-                                        ? "Cancel Booking"
-                                        : isWaitlisted
-                                        ? "On Waitlist"
-                                        : "Book Event"
-                                }
-                            </button>
+                            <!-- ACTION BUTTON -->
+                            ${
+                                isBooked
+                                    ? `
+                                <button 
+                                    class="cancel-button"
+                                    onclick="cancelBooking('${event.id}'); event.stopPropagation();">
+                                    Cancel Booking
+                                </button>
+                                `
+                                    : isWaitlisted
+                                    ? `
+                                <button 
+                                    class="cancel-button"
+                                    onclick="leaveWaitlist('${event.id}'); event.stopPropagation();">
+                                    Leave Waitlist
+                                </button>
+                                `
+                                    : `
+                                <button 
+                                    class="book-button"
+                                    onclick="makeBooking('${event.id}'); event.stopPropagation();">
+                                    Book Event
+                                </button>
+                                `
+}
 
 
                              <!-- DOWNLOAD PDF BUTTON -->
@@ -155,6 +158,27 @@ function displayEvents(events, expandedEventsIds = []) {
 function downloadBooking(eventId) {
     window.location.href = `/booking-confirmation/${eventId}`;
 }
+
+async function leaveWaitlist(eventId) {
+    if (!confirm("Are you sure you want to leave the waitlist?")) return;
+
+    try {
+        const res = await fetch("/cancel-waitlist", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ eventId }),
+        });
+
+        alert(await res.text());
+        getEvents(); // refresh UI
+    } catch (err) {
+        console.error("Leave waitlist error:", err);
+        alert("Failed to leave waitlist");
+    }
+}
+
 
 // Fetches the requested cookie
 function getCookie(name) {

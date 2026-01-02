@@ -503,6 +503,27 @@ def create_event():
     }, 201
 
 
+@app.post("/cancel-waitlist")
+def cancel_waitlist():
+    user_id = request.cookies.get("user_id")
+    data = request.get_json()
+    event_id = data.get("eventId")
+
+    if not user_id or not event_id:
+        return "Missing user or event", 400
+
+    try:
+        events_table.update_item(
+            Key={"id": event_id},
+            UpdateExpression="DELETE waitlist_users :u",
+            ExpressionAttributeValues={":u": {user_id}}
+        )
+        return "You have left the waitlist", 200
+
+    except Exception as e:
+        print(f"Waitlist cancel error: {e}")
+        return "Failed to leave waitlist", 500
+
 # ======================
 # Admin Portal Logic
 # ======================
@@ -561,6 +582,7 @@ def update_role():
     except Exception as e:
         print(f"Role Update Error: {e}")
         return "Failed to update user role", 500
+    
      
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
