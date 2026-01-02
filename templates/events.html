@@ -29,13 +29,13 @@
                     >Create event</a
                 >
 
-                <br /><br />
                 <form class="search-events">
                     <input
                         type="search"
                         placeholder="Search for an event title..."
                     />
-                    <button type="submit">Search</button>
+                    <button>Search</button>
+                    <button type="button" onclick="getEvents()">Refresh</button>
                 </form>
             </section>
 
@@ -52,9 +52,18 @@
 
             async function getEvents() {
                 try {
-                    const res = await fetch("/events");
-                    allEvents = await res.json();
-                    displayEvents(allEvents);
+                    const expandedEvents = document.querySelectorAll(
+                        ".event-item.toggled"
+                    ); // Gets all expanded events
+
+                    const expandedEventsIds = [];
+                    for (const event of expandedEvents)
+                        expandedEventsIds.push(
+                            event.getAttribute("data-eventId")
+                        ); // Obtains the event IDs
+
+                    allEvents = await (await fetch("/events")).json(); // Fetches events from backend
+                    displayEvents(allEvents, expandedEventsIds);
                 } catch (err) {
                     console.error("getEvents() error: " + err);
                     document.getElementById("events-list").innerHTML =
@@ -62,9 +71,9 @@
                 }
             }
 
-            function displayEvents(events) {
+            function displayEvents(events, expandedEventsIds = []) {
                 const eventsSection = document.getElementById("events-list");
-                eventsSection.innerHTML = ""; // Resets the event list
+                eventsSection.innerHTML = ""; // Resets to a clean slate
 
                 if (events.length === 0) {
                     eventsSection.innerHTML = "<p>No events found.</p>";
@@ -76,9 +85,14 @@
                 for (const event of events) {
                     const isBooked =
                         event.booked_users &&
-                        event.booked_users.includes(currentUserId);
-                    const eventDiv = document.createElement("div"); // Creates new event div
-                    eventDiv.className = "event-item";
+                        event.booked_users.includes(currentUserId); // Checks if current user has booked this event
+                    const wasExpanded = expandedEventsIds.includes(event.id); // Checks if event was previously expanded by the user
+                    const eventDiv = document.createElement("div");
+
+                    eventDiv.className = wasExpanded
+                        ? "event-item toggled"
+                        : "event-item"; // Expands if previously expanded
+                    eventDiv.setAttribute("data-eventId", event.id); // Stores event ID for future use
 
                     // Writes the HTML
                     eventDiv.innerHTML = `
