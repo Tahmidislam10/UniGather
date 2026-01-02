@@ -53,13 +53,20 @@ def get_all_events():
     items.sort(key=lambda x: x.get("created_at", ""), reverse=True)
 
     for item in items:
-        # Use .get() with an empty list as a fallback
+        # Existing: booked users
         if "booked_users" in item and isinstance(item["booked_users"], set):
             item["booked_users"] = list(item["booked_users"])
         else:
-            item["booked_users"] = [] # Return empty list to frontend if no one booked yet
-            
+            item["booked_users"] = []
+
+        # waitlist users
+        if "waitlist_users" in item and isinstance(item["waitlist_users"], set):
+            item["waitlist_users"] = list(item["waitlist_users"])
+        else:
+            item["waitlist_users"] = []
+
     return jsonify(items), 200
+
 
 
 
@@ -210,8 +217,22 @@ def book_event():
     booked_users = event.get("booked_users", set())
     capacity = int(event.get("event_cap", 0))
 
+    waitlist = event.get("waitlist_users", set())
+
+    # === WAITLIST LOGIC ===
     if len(booked_users) >= capacity:
-        return "Event is full", 400
+        if user_id in waitlist:
+            return "You are already on the waitlist", 400
+
+        events_table.update_item(
+            Key={"id": event_id},
+            UpdateExpression="ADD waitlist_users :w",
+            ExpressionAttributeValues={":w": {user_id}}
+        )
+
+        return "Event is full. You have been added to the waitlist.", 200
+
+
 
     if user_id in booked_users:
         return "You have already booked this event", 400
@@ -241,8 +262,7 @@ def cancel_booking():
         return "Missing user or event", 400
 
     try:
-        # Use "DELETE" to remove the specific ID from the String Set (SS)
-        # Note: We provide the value inside a set literal {event_id}
+        # === EXISTING FUNCTIONALITY (DO NOT CHANGE) ===
         users_table.update_item(
             Key={"id": user_id},
             UpdateExpression="DELETE booked_events :e",
@@ -255,7 +275,43 @@ def cancel_booking():
             ExpressionAttributeValues={":u": {user_id}}
         )
 
+        # === NEW: AUTO-PROMOTE FROM WAITLIST ===
+        event_res = events_table.get_item(Key={"id": event_id})
+        event = event_res.get("Item")
+
+        if not event:
+            return "Booking cancelled successfully", 200
+
+        booked_users = event.get("booked_users", set())
+        waitlist_users = event.get("waitlist_users", set())
+        capacity = int(event.get("event_cap", 0))
+
+        if waitlist_users and len(booked_users) < capacity:
+            next_user = next(iter(waitlist_users))
+
+            # Remove user from waitlist
+            events_table.update_item(
+                Key={"id": event_id},
+                UpdateExpression="DELETE waitlist_users :w",
+                ExpressionAttributeValues={":w": {next_user}}
+            )
+
+            # Add user to booked_users
+            events_table.update_item(
+                Key={"id": event_id},
+                UpdateExpression="ADD booked_users :u",
+                ExpressionAttributeValues={":u": {next_user}}
+            )
+
+            # Add event to user's booked_events
+            users_table.update_item(
+                Key={"id": next_user},
+                UpdateExpression="ADD booked_events :e",
+                ExpressionAttributeValues={":e": {event_id}}
+            )
+
         return "Booking cancelled successfully", 200
+
     except Exception as e:
         print(f"Cancel error: {e}")
         return "Failed to cancel booking", 500

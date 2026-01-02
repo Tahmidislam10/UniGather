@@ -45,6 +45,8 @@ function displayEvents(events, expandedEventsIds = []) {
     for (const event of events) {
         const isBooked =
             event.booked_users && event.booked_users.includes(currentUserId); // Checks if current user has booked this event
+        const isWaitlisted =
+            event.waitlist_users && event.waitlist_users.includes(currentUserId);
         const wasExpanded = expandedEventsIds.includes(event.id); // Checks if event was previously expanded by the user
         const eventDiv = document.createElement("div");
 
@@ -104,15 +106,28 @@ function displayEvents(events, expandedEventsIds = []) {
                             <!-- DYNAMIC BOOK/CANCEL BUTTON -->
                             <button 
                                 class="${
-                                    isBooked ? "cancel-button" : "book-button"
+                                    isBooked
+                                        ? "cancel-button"
+                                        : isWaitlisted
+                                        ? "waitlist-button"
+                                        : "book-button"
                                 }"
                                 onclick="${
                                     isBooked
                                         ? `cancelBooking('${event.id}')`
                                         : `makeBooking('${event.id}')`
-                                }; event.stopPropagation();">
-                                ${isBooked ? "Cancel Booking" : "Book Event"}
+                                }; event.stopPropagation();"
+                                ${isWaitlisted ? "disabled" : ""}>
+
+                                ${
+                                    isBooked
+                                        ? "Cancel Booking"
+                                        : isWaitlisted
+                                        ? "On Waitlist"
+                                        : "Book Event"
+                                }
                             </button>
+
 
                              <!-- DOWNLOAD PDF BUTTON -->
                             ${
