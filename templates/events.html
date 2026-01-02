@@ -172,7 +172,7 @@
                                 }</p>
                             </div>
 
-                            <!-- DYNAMIC BOOK/CANCEL BUTTON -->
+                           <!-- DYNAMIC BOOK/CANCEL BUTTON -->
                             <button 
                                 class="${
                                     isBooked ? "cancel-button" : "book-button"
@@ -184,6 +184,15 @@
                                 }; event.stopPropagation();">
                                 ${isBooked ? "Cancel Booking" : "Book Event"}
                             </button>
+
+                            ${isBooked ? `
+                                <button 
+                                    class="download-button"
+                                    onclick="downloadBooking('${event.id}'); event.stopPropagation();">
+                                    Download Booking (PDF)
+                                </button>
+                            ` : ``}
+
                         </div>
                     `;
 
@@ -257,10 +266,17 @@
                 }
             }
 
+            function downloadBooking(eventId) {
+                window.location.href = `/booking-confirmation/${eventId}`;
+            }
+
+
             const createButton = document.getElementById("create-event-button");
             if (createButton)
                 createButton.addEventListener("click", checkPermission);
             getEvents();
+
+            
         </script>
     </body>
 </html>
