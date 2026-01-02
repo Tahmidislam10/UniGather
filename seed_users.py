@@ -9,18 +9,12 @@ def seed_data():
     # Note: We use 'id' instead of '_id' to match your Terraform/App logic
     users_to_add = [
         {
-            "id": "69542821a693dbefb3433533",
-            "username": "staff1",
-            "password": "staff123",
-            "role": "staff"
+            "id": "15322711a693dbefb3433533",
+            "username": "admin1",
+            "password": "admin123",
+            "role": "admin"
             # booked_events is omitted; DynamoDB will create the set 
             # automatically the first time they book an event.
-        },
-        {
-            "id": "69542834a693dbefb3433535",
-            "username": "student1",
-            "password": "student123",
-            "role": "student"
         }
     ]
 
