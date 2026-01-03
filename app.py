@@ -4,11 +4,12 @@ from db import get_db
 from datetime import datetime
 from boto3.dynamodb.conditions import Key, Attr
 from dateutil import parser
-
+from collections import defaultdict
 from io import BytesIO
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.utils import ImageReader
+
 
 app = Flask(__name__)
 
@@ -209,6 +210,9 @@ def book_event():
     user_id = request.cookies.get("user_id")
     if not user_id:
         return "You must be logged in to book events", 401
+
+    if role not in ["student", "staff"]:
+        return "Not allowed", 403
 
     data = request.get_json()
     event_id = data.get("eventId")
