@@ -18,6 +18,22 @@ db = get_db()
 events_table = db.Table("events")
 users_table = db.Table("users")
 
+# Helper function to check if the user has the correct permissions
+def has_permission(user_id, allowed):
+    if not user_id:
+        return False
+    
+    try: 
+        user = users_table.get_item(Key={"id": user_id}).get("Item")
+
+        if not user:
+            return False
+        
+        if user.get("role") in allowed:
+            return True
+    except Exception:
+        return False
+
 # ======================
 # PAGE ROUTES (HTML)
 # ======================
@@ -242,9 +258,8 @@ def book_event():
     if not user_id:
         return "You must be logged in to book events", 401
 
-    role = request.cookies.get("role")
-    if role not in ["student", "staff", "admin"]:
-        return "Not allowed", 403
+    if not has_permission(user_id, ["student", "staff", "admin"]):
+        return "Unauthorised", 403
 
     data = request.get_json()
     event_id = data.get("eventId")
@@ -432,10 +447,9 @@ def generate_booking_pdf(user, event):
 @app.post("/create/submit-event")
 def create_event():
     user_id = request.cookies.get("user_id")
-    role = request.cookies.get("role")
-
-    if not user_id or role not in ["staff", "admin"]:
-        return "Unauthorised User", 403
+    
+    if not has_permission(user_id, ["staff", "admin"]):
+        return "Unauthorised: only staff and admins allowed.", 403
 
     event_id = str(uuid.uuid4())
     try:
@@ -460,10 +474,9 @@ def create_event():
 
 @app.post("/delete-event")
 def delete_event():
-    role = request.cookies.get("role")
-    # FIX: Allow both 'staff' and 'admin' to delete
-    if role not in ["staff", "admin"]:
-        return "Unauthorised: Only Staff and Admins can delete events", 403
+    user_id = request.cookies.get("user_id")
+    if not has_permission(user_id, ["staff", "admin"]):
+        return "Unauthorised: only staff and admins can delete events.", 403
 
     data = request.get_json()
     event_id = data.get("eventId")
@@ -475,9 +488,9 @@ def delete_event():
 
 @app.post("/view-attendees")
 def view_attendees():
-    role = request.cookies.get("role")
-    if role not in ["staff", "admin"]:
-        return "Unauthorised", 403
+    user_id = request.cookies.get("user_id")
+    if not has_permission(user_id, ["staff", "admin"]):
+        return "Unauthorised: only staff and admins can view event attendees.", 403
 
     data = request.get_json()
     event_id = data.get("eventId")
@@ -502,21 +515,23 @@ def view_attendees():
 
 @app.route("/admin")
 def admin_page():
-    if request.cookies.get("role") != "admin":
-        return "Unauthorised", 403
+    user_id = request.cookies.get("user_id")
+    if not has_permission(user_id, ["admin"]):
+        return "Unauthorised: only admins allowed.", 403
     return render_template("admin.html")
 
 @app.route("/analytics")
 def analytics_page():
-    if request.cookies.get("role") not in ["staff", "admin"]:
-        return "Unauthorised", 403
+    user_id = request.cookies.get("user_id")
+    if not has_permission(user_id, ["staff", "admin"]):
+        return "Unauthorised: only staff and admins allowed.", 403
     return render_template("analytics.html")
-
 
 @app.get("/api/users")
 def get_all_users():
-    if request.cookies.get("role") != "admin":
-        return "Unauthorised", 403
+    user_id = request.cookies.get("user_id")
+    if not has_permission(user_id, ["admin"]):
+        return "Unauthorised: only admins allowed.", 403
 
     items = users_table.scan().get("Items", [])
     users_list = [{
@@ -529,8 +544,9 @@ def get_all_users():
 
 @app.post("/update-role")
 def update_role():
-    if request.cookies.get("role") != "admin":
-        return "Unauthorised", 403
+    user_id = request.cookies.get("user_id")
+    if not has_permission(user_id, ["admin"]):
+        return "Unauthorised: only admins allowed.", 403
 
     data = request.get_json()
     try:
@@ -546,9 +562,9 @@ def update_role():
 
 @app.get("/api/analytics/weekly")
 def analytics_weekly():
-    role = request.cookies.get("role")
-    if role not in ["staff", "admin"]:
-        return "Unauthorised", 403
+    user_id = request.cookies.get("user_id")
+    if not has_permission(user_id, ["staff", "admin"]):
+        return "Unauthorised: only staff and admins allowed.", 403
 
     events = events_table.scan().get("Items", [])
 
@@ -579,9 +595,9 @@ def analytics_weekly():
 
 @app.get("/api/analytics/daily")
 def analytics_daily():
-    role = request.cookies.get("role")
-    if role not in ["staff", "admin"]:
-        return "Unauthorised", 403
+    user_id = request.cookies.get("user_id")
+    if not has_permission(user_id, ["staff", "admin"]):
+        return "Unauthorised: only staff and admins allowed.", 403
 
     events = events_table.scan().get("Items", [])
 
@@ -610,9 +626,9 @@ def analytics_daily():
 
 @app.get("/api/analytics/summary")
 def analytics_summary():
-    role = request.cookies.get("role")
-    if role not in ["staff", "admin"]:
-        return "Unauthorised", 403
+    user_id = request.cookies.get("user_id")
+    if not has_permission(user_id, ["staff", "admin"]):
+        return "Unauthorised: only staff and admins allowed.", 403
 
     events = events_table.scan().get("Items", [])
 
