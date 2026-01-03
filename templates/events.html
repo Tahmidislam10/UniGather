@@ -1,63 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <title>Events</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="/static/style.css" />
-    </head>
+{% extends "base.html" %} {% block title %}Events - UniGather{% endblock %} {%
+block main %}
 
-    <body>
-        <header>
-            <div id="user-status" class="user-status" style="display: none;">
-                <p>Welcome, <span id="display-username"></span></p>
-                <a href="/logout" class="logout-link">Logout</a>
-            </div>
+<section>
+    <br />
+    <a href="/create" class="button" id="create-event-button">Create event</a>
 
-            <h1>UniGather</h1>
-            <p>All events</p>
+    <form
+        class="search-events"
+        onsubmit="event.preventDefault(); searchEvents(allEvents);"
+    >
+        <input
+            type="search"
+            id="search-input"
+            placeholder="Search for an event title..."
+        />
+        <button type="submit">Search</button>
+        <button type="button" onclick="getEvents()">Refresh</button>
+    </form>
+</section>
 
-            <nav>
-                <ul class="header-nav">
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/about">About Us</a></li>
-                    <li><a href="/events-page" class="active">Events</a></li>
-                    <li><a href="/login">Login / Register</a></li>
-                    
-                </ul>
-            </nav>
-        </header>
+<!-- EVENTS RENDER HERE -->
+<section id="events-list"></section>
 
-        <main>
-            <section>
-                <br />
-                <a href="/create" class="button" id="create-event-button"
-                    >Create event</a
-                >
-
-                <form
-                    class="search-events"
-                    onsubmit="event.preventDefault(); searchEvents(allEvents);"
-                >
-                    <input
-                        type="search"
-                        id="search-input"
-                        placeholder="Search for an event title..."
-                    />
-                    <button type="submit">Search</button>
-                    <button type="button" onclick="getEvents()">Refresh</button>
-                </form>
-            </section>
-
-            <!-- EVENTS RENDER HERE -->
-            <section id="events-list"></section>
-        </main>
-
-        <footer>
-            <h2>IN3046 Cloud Computing - Coursework Project</h2>
-        </footer>
-
-       <script src="/static/eventList.js"></script>
-       <script src="/static/events.js"></script>
-    </body>
-</html>
+{% endblock %} {% block scripts %}
+<script src="/static/eventList.js"></script>
+<script src="/static/events.js"></script>
+{% endblock %}

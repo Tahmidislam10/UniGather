@@ -55,15 +55,17 @@ async function cancelBooking(eventId) {
 function checkPermission(event) {
     const role = getCookie("role");
 
-    // As of now, only staff can create events
-    if (role !== "staff") {
+    if (role !== "staff" && role !== "admin") {
         event.preventDefault(); // If not staff, prevents redirect to event creation page
         alert("You must be logged in to create an event.");
     }
 }
 
-// Finds the create event button and adds a click event listener
-const createButton = document.getElementById("create-event-button");
-if (createButton) createButton.addEventListener("click", checkPermission);
+// Waits for HTML document to finish loading
+document.addEventListener("DOMContentLoaded", function () {
+    // Finds the create event button and adds a click event listener
+    const createButton = document.getElementById("create-event-button");
+    if (createButton) createButton.addEventListener("click", checkPermission);
 
-getEvents(); // Loads events to populate the page
+    getEvents(); // Loads events to populate the page
+});

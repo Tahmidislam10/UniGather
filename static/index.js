@@ -1,4 +1,12 @@
+// Fetches the user's booked events from the backend
 async function getBookedEvents() {
+    // Checks that the user is signed in for their events to be fetched
+    if (!getCookie("username")) {
+        document.getElementById("events-list").innerHTML =
+            "<p>You must be logged in to display your upcoming events.</p>";
+        return;
+    }
+
     try {
         allEvents = await (await fetch("/reminders")).json(); // Fetches events from backend
         displayEvents(allEvents, getExpandedEventIds());
@@ -33,4 +41,7 @@ async function cancelBooking(eventId) {
     }
 }
 
-getBookedEvents(); // Loads booked events to populate the page
+// Waits for HTML document to finish loading
+document.addEventListener("DOMContentLoaded", () => {
+    getBookedEvents(); // Loads booked events to populate the page
+});
