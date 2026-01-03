@@ -43,19 +43,19 @@ function displayEvents(events, expandedEventsIds = []) {
     eventsSection.innerHTML = ""; // Resets to a clean slate
 
     if (events.length === 0) {
-        eventsSection.innerHTML = "<p>No events to display.</p>";
+        eventsSection.innerHTML = "<p>No events found.</p>";
         return;
     }
 
-    const userId = getCookie("user_id");
-    const userRole = getCookie("role");
+    const currentUserId = getCookie("user_id");
 
     for (const event of events) {
-        const isStaff = userRole === "staff" || userRole === "admin"; // Checks if user is a staff member
+        const isStaff = getCookie("role") === "staff"; // Checks if user is a staff member
         const isBooked =
-            event.booked_users && event.booked_users.includes(userId); // Checks if current user has booked this event
+            event.booked_users && event.booked_users.includes(currentUserId); // Checks if current user has booked this event
         const isWaitlisted =
-            event.waitlist_users && event.waitlist_users.includes(userId);
+            event.waitlist_users &&
+            event.waitlist_users.includes(currentUserId);
         const wasExpanded = expandedEventsIds.includes(event.id); // Checks if event was previously expanded by the user
         const eventDiv = document.createElement("div");
 

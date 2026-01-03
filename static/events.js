@@ -55,13 +55,14 @@ async function cancelBooking(eventId) {
 function checkPermission(event) {
     const role = getCookie("role");
 
-    if (role !== "staff" && role !== "admin") {
+    // As of now, only staff can create events
+    if (role !== "staff") {
         event.preventDefault(); // If not staff, prevents redirect to event creation page
         alert("You must be logged in to create an event.");
     }
 }
 
-// Waits for HTML document to finish loading
+// Waits for the page to be fully loaded
 document.addEventListener("DOMContentLoaded", function () {
     // Finds the create event button and adds a click event listener
     const createButton = document.getElementById("create-event-button");

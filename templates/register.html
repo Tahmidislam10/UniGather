@@ -1,19 +1,37 @@
-{% extends "base.html" %} {% block title %}Register - UniGather{% endblock %} {%
-block main %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Register - UniGather</title>
+        <link rel="stylesheet" href="/static/style.css" />
+    </head>
+    <body>
+        <header>
+            <h1>UniGather</h1>
+            <p>Create a new account</p>
+        </header>
 
-<form action="/register" method="POST" class="create-form">
-    <label>Username</label>
-    <input type="text" name="username" required />
+        <main style="max-width: 400px; margin: auto">
+            <form action="/register" method="POST" class="create-form">
+                <label>Username</label>
+                <input type="text" name="username" required />
 
-    <label>City University Email (@city.ac.uk)</label>
-    <input type="email" name="email" required placeholder="name@city.ac.uk" />
+                <label>City University Email (@city.ac.uk)</label>
+                <input
+                    type="email"
+                    name="email"
+                    required
+                    placeholder="name@city.ac.uk"
+                />
 
-    <label>Password</label>
-    <input type="password" name="password" required />
+                <label>Password</label>
+                <input type="password" name="password" required />
 
-    <button type="submit" class="button">Register</button>
-</form>
-<p style="text-align: center">
-    Already have an account? <a href="/login">Login here</a>
-</p>
-{% endblock %}
+                <button type="submit" class="button">Register</button>
+            </form>
+            <p style="text-align: center">
+                Already have an account? <a href="/login">Login here</a>
+            </p>
+        </main>
+    </body>
+</html>

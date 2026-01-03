@@ -219,17 +219,14 @@ ol {
     transform: rotate(180deg);
 }
 
-
-.waitlist-button {
-    background-color: #1e1e1e;
+header {
+    background-color: #d61726;
     color: #ffffff;
-    cursor: not-allowed;
+    padding: 15px;
+    position: relative; /* Added to allow absolute positioning of children */
 }
 
-/* User Styling */
-
 .user-status {
-    display: none;
     position: absolute;
     top: 10px;
     right: 20px;
@@ -243,10 +240,20 @@ ol {
     color: #ffffff;
 }
 
-.admin-link {
+.logout-link {
     color: #ffffff;
     text-decoration: underline;
-    font-size: 1.2em;
+    font-size: 0.8em;
     display: inline-block;
     margin-top: 4px;
+}
+
+.logout-link:hover {
+    color: #1e1e1e; 
+}
+
+.waitlist-button {
+    background-color: #1e1e1e;
+    color: #ffffff;
+    cursor: not-allowed;
 }

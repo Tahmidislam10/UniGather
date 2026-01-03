@@ -9,9 +9,9 @@
 
     <body>
         <header>
-            <div id="user-status" class="user-status">
-                <p>Welcome, <span id="username-text"></span></p>
-                <a href="/admin" id="admin-link" class="admin-link">Admin</a>
+            <div id="user-status" class="user-status" style="display: none">
+                <p>Welcome, <span id="display-username"></span></p>
+                <a href="/logout" class="logout-link">Logout</a>
             </div>
 
             <h1>UniGather</h1>
@@ -28,19 +28,26 @@
                     </li>
                     <li>
                         <a
+                            href="/about"
+                            class="{{ 'active' if request.path == '/about' else '' }}"
+                            >About Us</a
+                        >
+                    </li>
+                    <li>
+                        <a
                             href="/events-page"
                             class="{{ 'active' if request.path == '/events-page' else '' }}"
                             >Events</a
                         >
                     </li>
 
-                    <!-- <li id="nav-admin" style="display: none">
+                    <li id="nav-admin" style="display: none">
                         <a
                             href="/admin"
                             class="{{ 'active' if request.path == '/admin' else '' }}"
                             >Admin</a
                         >
-                    </li> -->
+                    </li>
 
                     <li id="nav-login">
                         <a
@@ -48,10 +55,6 @@
                             class="{{ 'active' if request.path == '/login' or request.path == '/register' else '' }}"
                             >Login / Register</a
                         >
-                    </li>
-
-                    <li id="nav-logout" style="display: none">
-                        <a href="/logout">Logout</a>
                     </li>
                 </ul>
             </nav>

@@ -1,30 +1,34 @@
-// Handles the submission of a form for the creation of a new event
-async function createEvent(event) {
-    event.preventDefault();
+fetch("/admin/analytics")
+    .then(res => res.json())
+    .then(data => {
 
-    const formData = new FormData(event.target); // Obtains the data from the form that triggered this event call
+        const eventDays = Object.keys(data.events_per_day);
+        const eventCounts = Object.values(data.events_per_day);
 
-    try {
-        const response = await fetch("/create/submit-event", {
-            method: "POST",
-            body: formData,
+        const attendanceDays = Object.keys(data.attendees_per_day);
+        const attendanceCounts = Object.values(data.attendees_per_day);
+
+        new Chart(document.getElementById("eventsChart"), {
+            type: "bar",
+            data: {
+                labels: eventDays,
+                datasets: [{
+                    label: "Events Hosted Per Day",
+                    data: eventCounts
+                }]
+            }
         });
 
-        if (response.ok) {
-            alert("Event created successfully!");
-            window.location.href = "/events-page"; // Redirects to event page to view created event
-        } else {
-            alert(await response.text());
-        }
-    } catch (err) {
-        console.error("Event Submission Error: ", err);
-        alert("Event Submission Error.");
-    }
-}
+        new Chart(document.getElementById("attendanceChart"), {
+            type: "line",
+            data: {
+                labels: attendanceDays,
+                datasets: [{
+                    label: "People Attending Events Per Day",
+                    data: attendanceCounts
+                }]
+            }
+        });
 
-// Waits for HTML document to finish loading
-document.addEventListener("DOMContentLoaded", () => {
-    for (const form of document.querySelectorAll(".create-event-form")) {
-        form.addEventListener("submit", createEvent); // Adds listener waiting for submission event
-    }
-});
+    })
+    .catch(err => console.error("Analytics error:", err));
