@@ -12,15 +12,7 @@ body {
     flex-direction: column;
 }
 
-header {
-    background-color: #d61726;
-    color: #ffffff;
-    padding: 15px;
 
-    /* Experiment with this */
-    position: sticky;
-    top: 0;
-}
 
 main {
     flex: 1;
@@ -314,4 +306,66 @@ ol {
     margin-top: 25px;
     padding-top: 20px;
     border-top: 1px solid #eee;
+}
+
+
+
+
+
+
+.top-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #c8102e;
+    padding: 20px 30px;
+}
+
+/* LEFT SIDE */
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+
+.nav-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+}
+
+
+
+
+
+
+header {
+    padding: 0;
+}
+
+
+
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.nav-logo {
+    height: 80px;
+    width: auto;
+}
+
+.nav-links a,
+.nav-right a {
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    margin-right: 15px;
+}
+
+.nav-links a:hover,
+.nav-right a:hover {
+    text-decoration: underline;
 }
