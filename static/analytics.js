@@ -33,6 +33,22 @@ function renderCharts(labels, eventsData, attendeesData) {
     });
 }
 
+function loadSummaryStats() {
+    fetch("/api/analytics/summary")
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById("fillRate").innerText =
+                data.average_fill_rate + "%";
+
+            document.getElementById("bookingRatio").innerText =
+                `${data.booked} booked / ${data.waitlisted} waitlisted`;
+
+            document.getElementById("cancellations").innerText =
+                data.cancellations;
+        });
+}
+
+
 function loadWeekly() {
     fetch("/api/analytics/weekly")
         .then(res => res.json())
@@ -53,4 +69,6 @@ document.getElementById("weeklyBtn").onclick = loadWeekly;
 document.getElementById("dailyBtn").onclick = loadDaily;
 
 // Default view on page load
+loadSummaryStats();
 loadWeekly();
+

@@ -586,5 +586,45 @@ def analytics_daily():
     })
 
 
+@app.get("/api/analytics/summary")
+def analytics_summary():
+    role = request.cookies.get("role")
+    if role not in ["staff", "admin"]:
+        return "Unauthorised", 403
+
+    events = events_table.scan().get("Items", [])
+
+    total_capacity = 0
+    total_booked = 0
+    total_waitlisted = 0
+    total_events = 0
+
+    for event in events:
+        cap = int(event.get("event_cap", 0))
+        booked = len(event.get("booked_users", []))
+        waitlisted = len(event.get("waitlist_users", []))
+
+        total_capacity += cap
+        total_booked += booked
+        total_waitlisted += waitlisted
+        total_events += 1
+
+    avg_fill_rate = (
+        round((total_booked / total_capacity) * 100, 2)
+        if total_capacity > 0 else 0
+    )
+
+    cancellations = total_capacity - total_booked - total_waitlisted
+    if cancellations < 0:
+        cancellations = 0
+
+    return jsonify({
+        "average_fill_rate": avg_fill_rate,
+        "booked": total_booked,
+        "waitlisted": total_waitlisted,
+        "cancellations": cancellations
+    }), 200
+
+
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
