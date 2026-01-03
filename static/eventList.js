@@ -43,7 +43,7 @@ function displayEvents(events, expandedEventsIds = []) {
     eventsSection.innerHTML = ""; // Resets to a clean slate
 
     if (events.length === 0) {
-        eventsSection.innerHTML = "<p>No events found.</p>";
+        eventsSection.innerHTML = "<p>No events to display.</p>";
         return;
     }
 
