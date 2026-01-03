@@ -113,7 +113,7 @@ function displayEvents(events, expandedEventsIds = []) {
                                 }</p>
                             </div>
 
-                            <!-- ACTION BUTTON -->
+                            <!-- DYNAMIC BOOK/CANCEL/WAITLIST BUTTON -->
                             ${
                                 isBooked
                                     ? `
