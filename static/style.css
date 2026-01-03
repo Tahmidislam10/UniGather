@@ -223,7 +223,7 @@ ol {
 .search-events {
     display: flex;
     gap: 10px;
-    max-width: 800px;
+    max-width: 1000px;
     margin: 20px auto;
 }
 
@@ -238,7 +238,7 @@ ol {
     display: flex;
     flex-direction: column;
     gap: 15px;
-    max-width: 800px;
+    max-width: 1000px;
     margin: 20px auto;
 }
 
@@ -262,7 +262,7 @@ ol {
 
 .event-main {
     display: grid;
-    grid-template-columns: minmax(0, 2fr) minmax(0, 1.5fr) max-content auto;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1.2fr) max-content minmax(0, 0.3fr) auto;
     gap: 10px;
     white-space: nowrap;
     justify-content: space-between;
