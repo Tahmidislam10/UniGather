@@ -8,39 +8,64 @@
     </head>
 
     <body>
-        <header class="top-nav">
-    
-    <div class="nav-left">
-        <img src="/static/logo.png" alt="UniGather Logo" class="nav-logo" />
-        
+        <header class="header-nav">
+            <div class="nav-left">
+                <img
+                    src="/static/logoWhite.png"
+                    alt="UniGather Logo"
+                    class="nav-logo"
+                />
 
-        <nav class="nav-links">
-            <a href="/" class="{{ 'active' if request.path == '/' else '' }}">Home</a>
-            <a href="/events-page" class="{{ 'active' if request.path == '/events-page' else '' }}">Events</a>
-            <a href="/analytics" id="analytics-link" style="display:none;" class="{{ 'active' if request.path == '/analytics' else '' }}"> Analytics </a>
-            
-        </nav>
-    </div>
+                <nav class="nav-buttons">
+                    <a
+                        href="/"
+                        class="{{ 'active' if request.path == '/' else '' }}"
+                        >Home</a
+                    >
+                    <a
+                        href="/events-page"
+                        class="{{ 'active' if request.path == '/events-page' else '' }}"
+                        >Events</a
+                    >
 
-    
-    <div class="nav-right">
-        <div id="user-status" style="display: none;">
-            <span id="username-text"></span>
+                    <a
+                        href="/analytics"
+                        id="analytics-link"
+                        style="display: none"
+                        class="{{ 'active' if request.path == '/analytics' else '' }}"
+                    >
+                        Analytics
+                    </a>
+                </nav>
+            </div>
 
-            <a href="/admin" id="admin-link" class="admin-link">Admin</a>
-            <a href="/logout">Logout</a>
-        </div>
+            <div class="nav-right">
+                <div id="user-status" class="user-status">
+                    Signed in as: <span id="username-text"></span>
+                </div>
 
-        <a
-            href="/login"
-            id="nav-login"
-            class="{{ 'active' if request.path == '/login' or request.path == '/register' else '' }}"
-        >
-            Login / Register
-        </a>
-    </div>
-</header>
+                <div class="nav-buttons nav-buttons-right">
+                    <a
+                        href="/admin"
+                        id="admin-link"
+                        class="admin-link {{ 'active' if request.path == '/admin' else '' }}"
+                        style="display: none"
+                        >Admin</a
+                    >
+                    <a href="/logout" id="nav-logout" style="display: none"
+                        >Logout</a
+                    >
 
+                    <a
+                        href="/login"
+                        id="nav-login"
+                        class="{{ 'active' if request.path == '/login' or request.path == '/register' else '' }}"
+                    >
+                        Login / Register
+                    </a>
+                </div>
+            </div>
+        </header>
 
         <main>{% block main %}{% endblock %}</main>
 
