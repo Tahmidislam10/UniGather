@@ -9,7 +9,7 @@ from io import BytesIO
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.utils import ImageReader
-
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 
@@ -145,23 +145,38 @@ def download_booking_confirmation(event_id):
 
 @app.post("/login")
 def login():
+    # 1. Get the plain text email and password from the form
     email = request.form.get("email", "").strip().lower()
     password = request.form.get("password", "").strip()
 
+    # 2. Find the user in DynamoDB by their email
+    # We don't include password in the scan because it's now hashed
     response = users_table.scan(
-        FilterExpression=Attr("email").eq(email) & Attr("password").eq(password)
+        FilterExpression=Attr("email").eq(email)
     )
     items = response.get("Items", [])
 
+    # 3. If no user found with that email
     if not items:
         return "Invalid email or password", 401
 
     user = items[0]
+    stored_hashed_password = user.get("password")
+
+    # 4. SECURITY CHECK: Compare the plain password with the stored hash
+    # check_password_hash handles the decryption/comparison logic for you
+    if not check_password_hash(stored_hashed_password, password):
+        return "Invalid email or password", 401
+
+    # 5. Success: Set cookies and redirect
+    # We use Full Name for the 'username' cookie so the header looks nice
+    display_name = user.get("full_name", user.get("username", "User"))
+    
     response = make_response(redirect("/events-page"))
     response.set_cookie("user_id", user["id"]) 
     response.set_cookie("role", user["role"])
-    # Uses Full Name for the display cookie
-    response.set_cookie("username", user.get("full_name", user.get("username", "User"))) 
+    response.set_cookie("username", display_name) 
+    
     return response
 
 @app.route("/logout")
@@ -174,32 +189,48 @@ def logout():
 
 @app.post("/register")
 def register():
+    # 1. Retrieve and clean form data
     full_name = request.form.get("full_name", "").strip()
-    password = request.form.get("password", "").strip()
     email = request.form.get("email", "").strip().lower()
+    password = request.form.get("password", "").strip()
 
-    if not full_name or not password or not email:
+    # 2. Basic validation
+    if not full_name or not email or not password:
         return "All fields are required", 400
 
+    # 3. Academic email restriction (.ac.uk)
     if not email.endswith(".ac.uk"):
-        return "Registration restricted to .ac.uk academic emails", 403
+        return "Registration is restricted to .ac.uk academic emails", 403
 
-    existing_user = users_table.scan(FilterExpression=Attr("email").eq(email))
+    # 4. Check if the email is already in use
+    existing_user = users_table.scan(
+        FilterExpression=Attr("email").eq(email)
+    )
     if existing_user.get("Items"):
         return "An account with this email already exists", 400
 
+    # 5. Security: Hash the password
+    # Using pbkdf2:sha256 to ensure compatibility with your Mac environment
+    hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
+
+    # 6. Prepare the user object for DynamoDB
     user_id = str(uuid.uuid4())
     new_user = {
         "id": user_id,
         "full_name": full_name,
-        "password": password, 
         "email": email,
-        "role": "student",
-        "booked_events": []
+        "password": hashed_password, # Storing the protected hash
+        "role": "student",           # Default role
+        "booked_events": []          # Initialised as a list to prevent "ValidationException"
     }
 
-    users_table.put_item(Item=new_user)
-    return redirect("/login")
+    # 7. Save to database
+    try:
+        users_table.put_item(Item=new_user)
+        return redirect("/login")
+    except Exception as e:
+        print(f"Registration Error: {e}")
+        return "Failed to create account. Please try again later.", 500
 
 # ======================
 # BOOKING SYSTEM
