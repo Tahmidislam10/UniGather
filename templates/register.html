@@ -1,19 +1,46 @@
-{% extends "base.html" %} {% block title %}Register - UniGather{% endblock %} {%
-block main %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Register - UniGather</title>
+    <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+    <header>
+        <h1>UniGather</h1>
+        <p>Create a new account</p>
+    </header>
 
-<form action="/register" method="POST" class="create-form">
-    <label>Username</label>
-    <input type="text" name="username" required />
+    <main>
+        <section class="form-section">
+            <form action="/register" method="POST" class="create-event-form">
+                <div class="form-field-normal">
+                    <label>Full Name:</label>
+                    <input type="text" name="full_name" required placeholder="John Smith" />
+                </div>
 
-    <label>City University Email (@city.ac.uk)</label>
-    <input type="email" name="email" required placeholder="name@city.ac.uk" />
+                <div class="form-field-normal">
+                    <label>Academic Email:</label>
+                    <input type="email" name="email" required placeholder="name@university.ac.uk" />
+                </div>
 
-    <label>Password</label>
-    <input type="password" name="password" required />
+                <div class="form-field-normal">
+                    <label>Password:</label>
+                    <input type="password" name="password" required />
+                </div>
 
-    <button type="submit" class="button">Register</button>
-</form>
-<p style="text-align: center">
-    Already have an account? <a href="/login">Login here</a>
-</p>
-{% endblock %}
+                <div class="form-actions">
+                    <button type="submit" class="button" style="background-color: #28a745; color: white;">Register</button>
+                </div>
+            </form>
+            <p style="text-align: center; margin-top: 20px;">
+                Already have an account? <a href="/login">Login here</a>
+            </p>
+        </section>
+    </main>
+
+    <footer>
+        <h2>IN3046 Cloud Computing - Coursework Project</h2>
+    </footer>
+</body>
+</html>
