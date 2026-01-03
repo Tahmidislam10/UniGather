@@ -211,27 +211,85 @@ def book_event():
     if not user_id:
         return "You must be logged in to book events", 401
 
-    user_role = request.cookies.get("role")
-    if user_role not in ["student", "staff", "admin"]:
+    role = request.cookies.get("role")
+    if role not in ["student", "staff", "admin"]:
         return "Not allowed", 403
 
     data = request.get_json()
     event_id = data.get("eventId")
 
-    # FIX: Use list_append to handle the 'booked_events' List correctly
+    event = events_table.get_item(Key={"id": event_id}).get("Item")
+    if not event:
+        return "Event not found", 404
+
+    booked_users = event.get("booked_users", [])
+    waitlist_users = event.get("waitlist_users", [])
+    capacity = int(event.get("event_cap", 0))
+
+    # Already booked
+    if user_id in booked_users:
+        return "You already booked this event", 400
+
+    # Already on waitlist
+    if user_id in waitlist_users:
+        return "You are already on the waitlist", 400
+
+    # Event full → add to waitlist
+    if len(booked_users) >= capacity:
+        events_table.update_item(
+            Key={"id": event_id},
+            UpdateExpression="SET waitlist_users = list_append(if_not_exists(waitlist_users, :e), :u)",
+            ExpressionAttributeValues={
+                ":u": [user_id],
+                ":e": []
+            }
+        )
+        return "Event full. You have been added to the waitlist.", 200
+
+    # Otherwise → book normally
     users_table.update_item(
         Key={"id": user_id},
-        UpdateExpression="SET booked_events = list_append(if_not_exists(booked_events, :empty_list), :e)",
-        ExpressionAttributeValues={":e": [event_id], ":empty_list": []}
+        UpdateExpression="SET booked_events = list_append(if_not_exists(booked_events, :e), :b)",
+        ExpressionAttributeValues={
+            ":b": [event_id],
+            ":e": []
+        }
     )
 
     events_table.update_item(
         Key={"id": event_id},
-        UpdateExpression="SET booked_users = list_append(if_not_exists(booked_users, :empty_list), :u)",
-        ExpressionAttributeValues={":u": [user_id], ":empty_list": []}
+        UpdateExpression="SET booked_users = list_append(if_not_exists(booked_users, :e), :u)",
+        ExpressionAttributeValues={
+            ":u": [user_id],
+            ":e": []
+        }
     )
 
     return "Event booked successfully", 200
+
+@app.post("/cancel-waitlist")
+def cancel_waitlist():
+    user_id = request.cookies.get("user_id")
+    data = request.get_json()
+    event_id = data.get("eventId")
+
+    if not user_id or not event_id:
+        return "Missing data", 400
+
+    event = events_table.get_item(Key={"id": event_id}).get("Item")
+    if not event:
+        return "Event not found", 404
+
+    new_waitlist = [u for u in event.get("waitlist_users", []) if u != user_id]
+
+    events_table.update_item(
+        Key={"id": event_id},
+        UpdateExpression="SET waitlist_users = :w",
+        ExpressionAttributeValues={":w": new_waitlist}
+    )
+
+    return "You have left the waitlist", 200
+
 
 @app.post("/cancel-booking")
 def cancel_booking():
