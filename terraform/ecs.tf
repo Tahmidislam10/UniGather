@@ -164,15 +164,12 @@ resource "aws_ecs_service" "main" {
   name            = "${var.app_name}-service"
   cluster         = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.app.arn
-  desired_count   = 1
+  desired_count   = 1 # Start with 1, let autoscaling take over
   launch_type     = "FARGATE"
 
   network_configuration {
-    # Deploy tasks into private subnets
     subnets          = aws_subnet.private[*].id
     security_groups  = [aws_security_group.ecs_tasks.id]
-    
-    # False because tasks use the NAT Gateway for outbound traffic
     assign_public_ip = false 
   }
 
@@ -182,17 +179,45 @@ resource "aws_ecs_service" "main" {
     container_port   = 5000
   }
 
-  # Ensure the secure listener is ready first
   depends_on = [aws_lb_listener.https]
 
   lifecycle {
-    ignore_changes = [task_definition]
+    # Added desired_count so scaling actions don't get reset by terraform apply
+    ignore_changes = [task_definition, desired_count]
   }
-
 }
 
 # --- CloudWatch Log Group ---
 resource "aws_cloudwatch_log_group" "ecs" {
   name              = "/ecs/${var.app_name}"
   retention_in_days = 7
+}
+
+# --- AUTOSCALING RESOURCES ---
+
+# 1. Define the Scalable Target (The "Floor" and "Ceiling")
+resource "aws_appautoscaling_target" "ecs_target" {
+  max_capacity       = 4
+  min_capacity       = 1
+  resource_id        = "service/${aws_ecs_cluster.main.name}/${aws_ecs_service.main.name}"
+  scalable_dimension = "ecs:service:DesiredCount"
+  service_namespace  = "ecs"
+}
+
+# 2. Define the Scaling Policy (CPU Tracking)
+resource "aws_appautoscaling_policy" "ecs_policy_cpu" {
+  name               = "cpu-autoscaling"
+  policy_type        = "TargetTrackingScaling"
+  resource_id        = aws_appautoscaling_target.ecs_target.resource_id
+  scalable_dimension = aws_appautoscaling_target.ecs_target.scalable_dimension
+  service_namespace  = aws_appautoscaling_target.ecs_target.service_namespace
+
+  target_tracking_scaling_policy_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "ECSServiceAverageCPUUtilization"
+    }
+    target_value       = 70.0 # Scale up if average CPU hits 70%
+    scale_in_cooldown  = 300  # Wait 5 mins before scaling down
+    scale_out_cooldown = 60   # Scale up within 1 min
+  }
 }
