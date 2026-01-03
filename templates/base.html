@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>{% block title %}UniGather{% endblock %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="/static/style.css" />
+    </head>
+
+    <body>
+        <header>
+            <div id="user-status" class="user-status" style="display: none">
+                <p>Welcome, <span id="display-username"></span></p>
+                <a href="/logout" class="logout-link">Logout</a>
+            </div>
+
+            <h1>UniGather</h1>
+            <p>An event management system</p>
+
+            <nav>
+                <ul class="header-nav">
+                    <li>
+                        <a
+                            href="/"
+                            class="{{ 'active' if request.path == '/' else '' }}"
+                            >Home</a
+                        >
+                    </li>
+                    <li>
+                        <a
+                            href="/about"
+                            class="{{ 'active' if request.path == '/about' else '' }}"
+                            >About Us</a
+                        >
+                    </li>
+                    <li>
+                        <a
+                            href="/events-page"
+                            class="{{ 'active' if request.path == '/events-page' else '' }}"
+                            >Events</a
+                        >
+                    </li>
+
+                    <li id="nav-admin" style="display: none">
+                        <a
+                            href="/admin"
+                            class="{{ 'active' if request.path == '/admin' else '' }}"
+                            >Admin</a
+                        >
+                    </li>
+
+                    <li id="nav-login">
+                        <a
+                            href="/login"
+                            class="{{ 'active' if request.path == '/login' or request.path == '/register' else '' }}"
+                            >Login / Register</a
+                        >
+                    </li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>{% block main %}{% endblock %}</main>
+
+        <footer>
+            <h2>IN3046 Cloud Computing - Coursework Project</h2>
+        </footer>
+
+        <script src="/static/user.js"></script>
+        {% block scripts %}{% endblock %}
+    </body>
+</html>
