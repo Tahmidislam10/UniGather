@@ -22,7 +22,7 @@ async function createEvent(event) {
     }
 }
 
-// Waits for HTML document to finish loading.
+// Waits for HTML document to finish loading
 document.addEventListener("DOMContentLoaded", () => {
     for (const form of document.querySelectorAll(".create-event-form")) {
         form.addEventListener("submit", createEvent); // Adds listener waiting for submission event
