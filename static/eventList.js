@@ -1,5 +1,12 @@
 let allEvents = []; // All events that could be displayed
 
+// Fetches the requested cookie
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+}
+
 // Returns the event IDs of events currently expanded by the user
 function getExpandedEventIds() {
     const expandedEvents = document.querySelectorAll(".event-item.toggled"); // Gets all expanded events
@@ -43,6 +50,7 @@ function displayEvents(events, expandedEventsIds = []) {
     const currentUserId = getCookie("user_id");
 
     for (const event of events) {
+        const isStaff = getCookie("role") === "staff"; // Checks if user is a staff member
         const isBooked =
             event.booked_users && event.booked_users.includes(currentUserId); // Checks if current user has booked this event
         const isWaitlisted =
@@ -50,7 +58,6 @@ function displayEvents(events, expandedEventsIds = []) {
             event.waitlist_users.includes(currentUserId);
         const wasExpanded = expandedEventsIds.includes(event.id); // Checks if event was previously expanded by the user
         const eventDiv = document.createElement("div");
-        
 
         eventDiv.className = wasExpanded ? "event-item toggled" : "event-item"; // Expands if previously expanded
         eventDiv.setAttribute("data-eventId", event.id); // Stores event ID for future use
@@ -131,7 +138,7 @@ function displayEvents(events, expandedEventsIds = []) {
                                     Book Event
                                 </button>
                                 `
-}
+                            }
 
 
                              <!-- DOWNLOAD PDF BUTTON -->
@@ -146,6 +153,25 @@ function displayEvents(events, expandedEventsIds = []) {
                             `
                                     : ``
                             }
+
+                             <!-- STAFF VIEW ATTENDEES BUTTON -->
+                             ${
+                                 isStaff
+                                     ? `
+                                <button 
+                                    class="attendee-button"
+                                    onclick="viewAttendees('${event.id}'); event.stopPropagation();">
+                                    View Attendees
+                                </button>
+
+                                <button 
+                                    class="delete-button"
+                                    onclick="deleteEvent('${event.id}'); event.stopPropagation();">
+                                    Delete Event
+                                </button>
+                            `
+                                     : ``
+                             }
                         </div>
                     `;
 
@@ -172,18 +198,47 @@ async function leaveWaitlist(eventId) {
         });
 
         alert(await res.text());
-        getEvents(); // refresh UI
+        getEvents(); // Refreshes the events list
     } catch (err) {
         console.error("Leave waitlist error:", err);
         alert("Failed to leave waitlist");
     }
 }
 
+async function viewAttendees(eventId) {
+    try {
+        const res = await fetch("/view-attendees", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ eventId }),
+        });
 
-// Fetches the requested cookie
-function getCookie(name) {
-    const match = document.cookie.match(
-        new RegExp("(^| )" + name + "=([^;]+)")
-    );
-    return match ? decodeURIComponent(match[2]) : null;
+        alert(await res.text());
+        getEvents(); // Refreshes the events list
+    } catch (err) {
+        console.error("viewAttendees():", err);
+        alert("Failed to obtain attendees");
+    }
+}
+
+async function deleteEvent(eventId) {
+    if (!confirm("Are you sure you want to delete this event?")) return;
+
+    try {
+        const res = await fetch("/delete-event", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ eventId }),
+        });
+
+        alert(await res.text());
+        getEvents(); // Refreshes the events list
+    } catch (err) {
+        console.error("deleteEvent():", err);
+        alert("Failed to delete event");
+    }
 }
