@@ -369,3 +369,12 @@ header {
 .nav-right a:hover {
     text-decoration: underline;
 }
+
+.chart-container {
+    max-width: 800px;
+    margin: 40px auto;
+}
+
+canvas {
+    max-height: 400px;
+}

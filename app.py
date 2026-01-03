@@ -484,6 +484,13 @@ def admin_page():
         return "Unauthorised", 403
     return render_template("admin.html")
 
+@app.route("/analytics")
+def analytics_page():
+    if request.cookies.get("role") not in ["staff", "admin"]:
+        return "Unauthorised", 403
+    return render_template("analytics.html")
+
+
 @app.get("/api/users")
 def get_all_users():
     if request.cookies.get("role") != "admin":
@@ -514,6 +521,70 @@ def update_role():
         return "Role updated", 200
     except:
         return "Failed", 500
+
+@app.get("/api/analytics/weekly")
+def analytics_weekly():
+    role = request.cookies.get("role")
+    if role not in ["staff", "admin"]:
+        return "Unauthorised", 403
+
+    events = events_table.scan().get("Items", [])
+
+    weekly_events = defaultdict(int)
+    weekly_attendees = defaultdict(int)
+
+    for event in events:
+        created_at = event.get("created_at")
+        if not created_at:
+            continue
+
+        dt = parser.parse(created_at)
+        year, week, _ = dt.isocalendar()
+        week_key = f"{year}-W{week:02d}"
+
+
+        weekly_events[week_key] += 1
+        weekly_attendees[week_key] += len(event.get("booked_users", []))
+
+    weeks_sorted = sorted(weekly_events.keys())
+
+    return jsonify({
+        "weeks": weeks_sorted,
+        "events": [weekly_events[w] for w in weeks_sorted],
+        "attendees": [weekly_attendees[w] for w in weeks_sorted]
+    }), 200
+
+
+@app.get("/api/analytics/daily")
+def analytics_daily():
+    role = request.cookies.get("role")
+    if role not in ["staff", "admin"]:
+        return "Unauthorised", 403
+
+    events = events_table.scan().get("Items", [])
+
+    daily_events = defaultdict(int)
+    daily_attendees = defaultdict(int)
+
+    for event in events:
+        created_at = event.get("created_at")
+        if not created_at:
+            continue
+
+        dt = parser.parse(created_at)
+        day = dt.strftime("%A")  # Monday, Tuesday, etc.
+
+        daily_events[day] += 1
+        daily_attendees[day] += len(event.get("booked_users", []))
+
+    ordered_days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
+
+    return jsonify({
+        "days": ordered_days,
+        "events": [daily_events[d] for d in ordered_days],
+        "attendees": [daily_attendees[d] for d in ordered_days]
+    })
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

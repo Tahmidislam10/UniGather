@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const loginButton = document.getElementById("nav-login");
     const logoutButton = document.getElementById("nav-logout");
     const adminButton = document.getElementById("admin-link");
+    const analyticsButton = document.getElementById("analytics-link");
 
     // Check if user is logged in
     if (username && username !== "") {
@@ -28,11 +29,20 @@ document.addEventListener("DOMContentLoaded", function () {
         if (logoutButton) logoutButton.style.display = "block";
 
         // Show admin button
+      
         if (role === "admin") {
             if (adminButton) adminButton.style.display = "block";
         } else {
             if (adminButton) adminButton.style.display = "none";
         }
+
+        // Show analytics button (staff + admin)
+        if (role === "staff" || role === "admin") {
+            if (analyticsButton) analyticsButton.style.display = "inline-block";
+        } else {
+            if (analyticsButton) analyticsButton.style.display = "none";
+        }
+
     } else {
         if (userStatusDiv) userStatusDiv.style.display = "none"; // Hides User Status
 
