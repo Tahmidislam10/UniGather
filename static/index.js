@@ -41,4 +41,7 @@ async function cancelBooking(eventId) {
     }
 }
 
-getBookedEvents(); // Loads booked events to populate the page
+// Waits for HTML document to finish loading
+document.addEventListener("DOMContentLoaded", () => {
+    getBookedEvents(); // Loads booked events to populate the page
+});
