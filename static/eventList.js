@@ -89,7 +89,10 @@ function displayEvents(events, expandedEventsIds = []) {
         const wasExpanded = expandedEventsIds.includes(event.id); // Checks if event was previously expanded by the user
         const eventDiv = document.createElement("div");
 
-        eventDiv.className = wasExpanded ? "event-item toggled" : "event-item"; // Expands if previously expanded
+        eventDiv.className = wasExpanded
+            ? "event-item event-card toggled"
+            : "event-item event-card";
+// Expands if previously expanded
         eventDiv.setAttribute("data-eventId", event.id); // Stores event ID for future use
 
         // Writes the HTML. NOTE: HTML comments below do not appear as green within VSCode

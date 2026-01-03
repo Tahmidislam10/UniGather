@@ -27,7 +27,7 @@
                 <input
                     type="email"
                     name="email"
-                    placeholder="name@city.ac.uk"
+                    placeholder="name@university.ac.uk"
                     required
                 />
             </div>
@@ -65,8 +65,8 @@ function validateEmail() {
     const email = document.querySelector('input[name="email"]').value;
     const error = document.getElementById("error-msg");
 
-    if (!email.endsWith("@city.ac.uk")) {
-        error.innerText = "Registration is restricted to @city.ac.uk email addresses.";
+    if (!email.endsWith(".ac.uk")) {
+        error.innerText = "Registration is restricted to academic (.ac.uk) email addresses.";
         error.style.display = "block";
         return false;
     }

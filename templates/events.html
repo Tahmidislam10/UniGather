@@ -3,20 +3,33 @@ block main %}
 
 <section>
     <br />
-    <a href="/create" class="button" id="create-event-button">Create event</a>
+    <a href="/create" class="button create-event-btn" id="create-event-button"> Create event </a>
+
 
     <form
-        class="search-events"
-        onsubmit="event.preventDefault(); searchEvents(allEvents);"
-    >
-        <input
-            type="search"
-            id="search-input"
-            placeholder="Search for an event title..."
-        />
-        <button type="submit">Search</button>
-        <button type="button" onclick="getEvents()">Refresh</button>
-    </form>
+    class="search-events"
+    onsubmit="event.preventDefault(); searchEvents(allEvents);"
+>
+    <input
+        type="search"
+        id="search-input"
+        placeholder="Search for an event title..."
+    />
+
+    <div class="search-actions">
+        <button type="submit" class="button secondary-btn">
+            Search
+        </button>
+        <button
+            type="button"
+            class="button secondary-btn"
+            onclick="getEvents()"
+        >
+            Refresh
+        </button>
+    </div>
+</form>
+
 </section>
 
 <!-- EVENTS RENDER HERE -->

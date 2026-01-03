@@ -357,3 +357,132 @@ canvas {
     font-size: 1.6rem;
     font-weight: bold;
 }
+
+
+/* ======================
+   Event Card Styling
+   ====================== */
+
+.event-card {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    border-left: 6px solid #d61726; /* UniGather red accent */
+}
+
+/* Event header row */
+.event-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* Event title */
+.event-title {
+    font-size: 1.2rem;
+    color: #111;
+}
+
+/* Meta info (date, host, time) */
+.event-meta {
+    color: #555;
+    font-size: 0.9rem;
+}
+
+/* Section labels */
+.event-label {
+    font-weight: bold;
+    color: #111;
+}
+
+/* Description text */
+.event-description {
+    margin-top: 8px;
+    color: #444;
+}
+
+/* Book button */
+.event-card button {
+    background: #d61726;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.95rem;
+}
+
+.event-card button:hover {
+    background: #b51420;
+}
+
+
+.create-event-btn {
+    background: #d61726;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.create-event-btn:hover {
+    background: #b51420;
+}
+
+
+/* Search bar layout */
+.search-events {
+    max-width: 900px;
+    margin: 20px auto;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.search-events input[type="search"] {
+    flex: 1;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+/* Button group */
+.search-actions {
+    display: flex;
+    gap: 10px;
+}
+
+/* Match UniGather red theme */
+.secondary-btn {
+    background-color: #d61726;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.secondary-btn:hover {
+    background-color: #b81420;
+    transform: translateY(-1px);
+}
+
+
+.search-events .button {
+    background-color: #d61726; /* UniGather red */
+    color: white;
+    border: none;
+}
+
+.search-events .button:hover {
+    background-color: #b31320;
+}

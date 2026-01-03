@@ -215,10 +215,10 @@ def register():
         return "All fields are required", 400
 
     # 3. Academic email restriction (.ac.uk)
-    if not email.endswith("@city.ac.uk"):
+    if not email.endswith(".ac.uk"):
         return render_template(
             "register.html",
-            error="Registration is restricted to @city.ac.uk email addresses."
+            error="Registration is restricted to ac.uk email addresses."
         ), 400
 
 
