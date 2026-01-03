@@ -212,7 +212,7 @@ def book_event():
         return "You must be logged in to book events", 401
 
     user_role = request.cookies.get("role")
-    if user_role not in ["student", "staff"]:
+    if user_role not in ["student", "staff", "admin"]:
         return "Not allowed", 403
 
     data = request.get_json()
