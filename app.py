@@ -324,25 +324,21 @@ def cancel_waitlist():
 
 @app.post("/cancel-booking")
 def cancel_booking():
-    requester_id = request.cookies.get("user_id")
-    role = request.cookies.get("role")
+    user_id = request.cookies.get("user_id")
     data = request.get_json()
-    
     event_id = data.get("eventId")
-    target_user_id = data.get("targetUserId", requester_id)
 
-    # Permission Check: Both Staff and Admin can cancel for anyone
-    if requester_id != target_user_id and role not in ["staff", "admin"]:
-        return "Unauthorised", 403
+    if not user_id or not event_id:
+        return "Missing user or event", 400
 
     try:
         # User side removal
-        user_res = users_table.get_item(Key={"id": target_user_id})
+        user_res = users_table.get_item(Key={"id": user_id})
         user = user_res.get("Item")
         if user:
             new_booked = [e for e in user.get("booked_events", []) if e != event_id]
             users_table.update_item(
-                Key={"id": target_user_id},
+                Key={"id": user_id},
                 UpdateExpression="SET booked_events = :b",
                 ExpressionAttributeValues={":b": new_booked}
             )
@@ -350,17 +346,43 @@ def cancel_booking():
         # Event side removal
         event_res = events_table.get_item(Key={"id": event_id})
         event = event_res.get("Item")
-        if event:
-            new_attendees = [u for u in event.get("booked_users", []) if u != target_user_id]
-            events_table.update_item(
-                Key={"id": event_id},
-                UpdateExpression="SET booked_users = :u",
-                ExpressionAttributeValues={":u": new_attendees}
+
+        if not event:
+            return "Booking cancelled successfully", 200
+        
+        new_attendees = [u for u in event.get("booked_users", []) if u != user_id]
+
+        # === AUTO-PROMOTE FROM WAITLIST ===
+
+        waitlist_users = event.get("waitlist_users", [])
+        capacity = int(event.get("event_cap", 0))
+
+        if waitlist_users and len(new_attendees) < capacity:
+            next_user_id = waitlist_users.pop(0)
+            new_attendees.append(next_user_id)
+
+            # Add event to user's booked_events
+            users_table.update_item(
+                Key={"id": next_user_id},
+                UpdateExpression="SET booked_events = list_append(if_not_exists(booked_events, :empty), :e)",
+                ExpressionAttributeValues={":e": [event_id], ":empty": []}
             )
 
+        # Changes the event
+        events_table.update_item(
+            Key={"id": event_id},
+            UpdateExpression="SET booked_users = :b, waitlist_users = :w",
+            ExpressionAttributeValues={
+                ":b": new_attendees,
+                ":w": waitlist_users
+            }
+        )
+
         return "Booking cancelled successfully", 200
+
     except Exception as e:
-        return f"Cancel error: {str(e)}", 500
+        print(f"Cancel error: {e}")
+        return "Failed to cancel booking", 500
 
 # ======================
 # PDF GENERATION
