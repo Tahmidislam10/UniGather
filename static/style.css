@@ -219,7 +219,6 @@ ol {
     transform: rotate(180deg);
 }
 
-
 .waitlist-button {
     background-color: #1e1e1e;
     color: #ffffff;
@@ -249,4 +248,70 @@ ol {
     font-size: 1.2em;
     display: inline-block;
     margin-top: 4px;
+}
+
+/* Login Styling */
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+    background-color: #f4f4f4;
+    min-height: 70vh;
+}
+
+.login-card {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 450px;
+    text-align: center;
+}
+
+.login-logo {
+    width: 120px;
+    margin-bottom: 20px;
+}
+
+.login-card h2 {
+    margin-bottom: 30px;
+    color: #1e1e1e;
+}
+
+.login-card .form-field-normal {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.login-card .form-field-normal label {
+    text-align: left;
+    width: 100%;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.login-card input {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+.login-card .button {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    background-color: #d61726;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.register-link-section {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
 }
