@@ -47,10 +47,11 @@ function displayEvents(events, expandedEventsIds = []) {
         return;
     }
 
-    const currentUserId = getCookie("user_id");
+    const userId = getCookie("user_id");
+    const userRole = getCookie("role");
 
     for (const event of events) {
-        const isStaff = getCookie("role") === "staff"; // Checks if user is a staff member
+        const isStaff = userRole === "staff" || userRole === "admin"; // Checks if user is a staff member
         const isBooked =
             event.booked_users && event.booked_users.includes(currentUserId); // Checks if current user has booked this event
         const isWaitlisted =
