@@ -1,144 +1,65 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <title>Login - UniGather</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="/static/style.css" />
-        <style>
-            /* Custom styles for the login card feel */
-            .login-container {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                padding: 40px 20px;
-                background-color: #f4f4f4;
-                min-height: 70vh;
-            }
+{% extends "base.html" %} {% block title %}Login - UniGather{% endblock %} {%
+block main %}
+<section class="login-container">
+    <div class="login-card">
+        <img src="/static/logo.png" alt="UniGather Logo" class="login-logo" />
+        <h2>Welcome Back</h2>
 
-            .login-card {
-                background: white;
-                padding: 40px;
-                border-radius: 12px;
-                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-                width: 100%;
-                max-width: 450px;
-                text-align: center;
-            }
-
-            .login-logo {
-                width: 120px;
-                margin-bottom: 20px;
-            }
-
-            .login-card h2 {
-                margin-bottom: 30px;
-                color: #1e1e1e;
-            }
-
-            .login-card .form-field-normal {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .login-card .form-field-normal label {
-                text-align: left;
-                width: 100%;
-                margin-bottom: 8px;
-                font-weight: bold;
-            }
-
-            .login-card input {
-                padding: 12px;
-                border: 1px solid #ddd;
-                border-radius: 6px;
-                font-size: 16px;
-            }
-
-            .login-card .button {
-                width: 100%;
-                padding: 12px;
-                font-size: 16px;
-                background-color: #d61726;
-                color: white;
-                border: none;
-                cursor: pointer;
-            }
-
-            .register-link-section {
-                margin-top: 25px;
-                padding-top: 20px;
-                border-top: 1px solid #eee;
-            }
-        </style>
-    </head>
-    <body>
-        <header>
-            <h1>UniGather</h1>
-            <nav>
-                <ul class="header-nav">
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/events-page">Events</a></li>
-                    <li><a href="/login" class="active">Login</a></li>
-                </ul>
-            </nav>
-        </header>
-
-        <main class="login-container">
-            <div class="login-card">
-                <img src="/static/logo.png" alt="UniGather Logo" class="login-logo">
-                <h2>Welcome Back</h2>
-
-                <form id="login-form">
-                    <div class="form-field-normal">
-                        <label>Email Address</label>
-                        <input type="email" name="email" placeholder="name@university.ac.uk" required />
-                    </div>
-
-                    <div class="form-field-normal">
-                        <label>Password</label>
-                        <input type="password" name="password" required />
-                    </div>
-
-                    <div class="form-actions">
-                        <button type="submit" class="button">Login</button>
-                    </div>
-                </form>
-
-                <div class="register-link-section">
-                    <p>New to UniGather?</p>
-                    <a href="/register" style="color: #d61726; font-weight: bold; text-decoration: none;">Create an account</a>
-                </div>
+        <form id="login-form">
+            <div class="form-field-normal">
+                <label>Email Address</label>
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="name@university.ac.uk"
+                    required
+                />
             </div>
-        </main>
 
-        <footer>
-            <h2>IN3046 Cloud Computing - Coursework Project</h2>
-        </footer>
+            <div class="form-field-normal">
+                <label>Password</label>
+                <input type="password" name="password" required />
+            </div>
 
-        <script>
-            // Keep existing login script
-            async function login(event) {
-                event.preventDefault();
-                const formData = new FormData(event.target);
+            <div class="form-actions">
+                <button type="submit" class="button">Login</button>
+            </div>
+        </form>
 
-                try {
-                    const response = await fetch("/login", {
-                        method: "POST",
-                        body: formData,
-                    });
+        <div class="register-link-section">
+            <p>New to UniGather?</p>
+            <a
+                href="/register"
+                style="color: #d61726; font-weight: bold; text-decoration: none"
+                >Create an account</a
+            >
+        </div>
+    </div>
+</section>
 
-                    if (response.ok) {
-                        window.location.href = "/events-page";
-                    } else {
-                        alert(await response.text());
-                    }
-                } catch (err) {
-                    console.error("Login Error: ", err);
-                    alert("Login Error.");
-                }
+{% endblock %} {% block scripts %}
+<script>
+    // Keep existing login script
+    async function login(event) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+
+        try {
+            const response = await fetch("/login", {
+                method: "POST",
+                body: formData,
+            });
+
+            if (response.ok) {
+                window.location.href = "/events-page";
+            } else {
+                alert(await response.text());
             }
-            document.getElementById("login-form").addEventListener("submit", login);
-        </script>
-    </body>
-</html>
+        } catch (err) {
+            console.error("Login Error: ", err);
+            alert("Login Error.");
+        }
+    }
+    document.getElementById("login-form").addEventListener("submit", login);
+</script>
+{% endblock %}
