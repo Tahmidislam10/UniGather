@@ -1,65 +1,78 @@
-{% extends "base.html" %} {% block title %}Register - UniGather{% endblock %} {%
-block main %}
-<section class="form-section">
-    <form action="/register" method="POST" onsubmit="return validateEmail()">
-        <div class="form-field-normal">
-            <label>Full Name:</label>
-            <input
-                type="text"
-                name="full_name"
-                required
-                placeholder="John Smith"
-            />
-        </div>
+{% extends "base.html" %}
+{% block title %}Register - UniGather{% endblock %}
 
-        <div class="form-field-normal">
-            <label>Academic Email:</label>
-            <input
-                type="email"
-                name="email"
-                required
-                placeholder="name@university.ac.uk"
-            />
-        </div>
+{% block main %}
+<section class="login-container">
+    <div class="login-card">
+        <img src="/static/logo.png" alt="UniGather Logo" class="login-logo" />
+        <h2>Create an Account</h2>
 
-        <div class="form-field-normal">
-            <label>Password:</label>
-            <input type="password" name="password" required />
-        </div>
+        {% if error %}
+        <p style="color:red; text-align:center;">{{ error }}</p>
+        {% endif %}
 
-        <div class="form-actions">
+        <form action="/register" method="POST" onsubmit="return validateEmail()">
+            <div class="form-field-normal">
+                <label>Full Name</label>
+                <input
+                    type="text"
+                    name="full_name"
+                    placeholder="John Smith"
+                    required
+                />
+            </div>
+
+            <div class="form-field-normal">
+                <label>Academic Email</label>
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="name@city.ac.uk"
+                    required
+                />
+            </div>
+
+            <div class="form-field-normal">
+                <label>Password</label>
+                <input type="password" name="password" required />
+            </div>
+
             <p id="error-msg" style="color:red; text-align:center; display:none;"></p>
-            <button
-                type="submit"
-                class="button"
-                style="background-color: #28a745; color: white"
+
+            <div class="form-actions">
+                <button type="submit" class="button">
+                    Register
+                </button>
+            </div>
+        </form>
+
+        <div class="register-link-section">
+            <p>Already have an account?</p>
+            <a
+                href="/login"
+                style="color: #d61726; font-weight: bold; text-decoration: none"
             >
-                Register
-            </button>
+                Login here
+            </a>
         </div>
-    </form>
-    <p style="text-align: center; margin-top: 20px">
-        Already have an account? <a href="/login">Login here</a>
-    </p>
+    </div>
 </section>
 {% endblock %}
 
-{% block scripts %} 
+{% block scripts %}
+<script>
+function validateEmail() {
+    const email = document.querySelector('input[name="email"]').value;
+    const error = document.getElementById("error-msg");
 
- <script>
-    function validateEmail() {
-        const email = document.querySelector('input[name="email"]').value;
-        const error = document.getElementById("error-msg");
-
-        if (!email.endsWith("@city.ac.uk")) {
-            error.innerText = "Registration is restricted to @city.ac.uk email addresses.";
-            error.style.display = "block";
-            return false;
-        }
-
-        error.style.display = "none";
-        return true;
+    if (!email.endsWith("@city.ac.uk")) {
+        error.innerText = "Registration is restricted to @city.ac.uk email addresses.";
+        error.style.display = "block";
+        return false;
     }
-</script>
 
+    error.style.display = "none";
+    return true;
+}
+</script>
 {% endblock %}
