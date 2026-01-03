@@ -50,10 +50,6 @@ ol {
 
 /* Header and Nav Styling */
 
-/* header {
-    padding: 0;
-} */
-
 .header-nav {
     display: flex;
     justify-content: space-between;
@@ -63,23 +59,6 @@ ol {
     position: relative; /* Required for absolute positioning of greeting */
     font-size: 1.2em;
 }
-/* 
-.header-nav a {
-    color: #ffffff;
-    font-weight: bold;
-    padding: 10px 15px;
-    border-radius: 8px;
-}
-
-.header-nav a.active {
-    background-color: #1e1e1e;
-    color: #ffffff;
-}
-
-.header-nav a:hover {
-    background-color: #ffffff36;
-} 
-    */
 
 .nav-logo {
     height: 60px; 
@@ -91,12 +70,6 @@ ol {
     align-items: center;
     gap: 20px;
 }
-/* 
-.nav-title {
-    font-size: 20px;
-    font-weight: bold;
-    color: white;
-} */
 
 .nav-buttons a {
     color: white;
@@ -358,7 +331,6 @@ ol {
 canvas {
     max-height: 400px;
 }
-
 
 .stats-container {
     display: flex;
