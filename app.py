@@ -215,8 +215,12 @@ def register():
         return "All fields are required", 400
 
     # 3. Academic email restriction (.ac.uk)
-    if not email.endswith(".ac.uk"):
-        return "Registration is restricted to .ac.uk academic emails", 403
+    if not email.endswith("@city.ac.uk"):
+        return render_template(
+            "register.html",
+            error="Registration is restricted to @city.ac.uk email addresses."
+        ), 400
+
 
     # 4. Check if the email is already in use
     existing_user = users_table.scan(

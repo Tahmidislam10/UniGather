@@ -1,7 +1,7 @@
 {% extends "base.html" %} {% block title %}Register - UniGather{% endblock %} {%
 block main %}
 <section class="form-section">
-    <form action="/register" method="POST">
+    <form action="/register" method="POST" onsubmit="return validateEmail()">
         <div class="form-field-normal">
             <label>Full Name:</label>
             <input
@@ -28,6 +28,7 @@ block main %}
         </div>
 
         <div class="form-actions">
+            <p id="error-msg" style="color:red; text-align:center; display:none;"></p>
             <button
                 type="submit"
                 class="button"
@@ -41,4 +42,24 @@ block main %}
         Already have an account? <a href="/login">Login here</a>
     </p>
 </section>
-{% endblock %} {% block scripts %} {% endblock %}
+{% endblock %}
+
+{% block scripts %} 
+
+ <script>
+    function validateEmail() {
+        const email = document.querySelector('input[name="email"]').value;
+        const error = document.getElementById("error-msg");
+
+        if (!email.endsWith("@city.ac.uk")) {
+            error.innerText = "Registration is restricted to @city.ac.uk email addresses.";
+            error.style.display = "block";
+            return false;
+        }
+
+        error.style.display = "none";
+        return true;
+    }
+</script>
+
+{% endblock %}
