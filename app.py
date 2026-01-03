@@ -4,11 +4,12 @@ from db import get_db
 from datetime import datetime
 from boto3.dynamodb.conditions import Key, Attr
 from dateutil import parser
-
+from collections import defaultdict
 from io import BytesIO
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.utils import ImageReader
+
 
 app = Flask(__name__)
 
@@ -582,7 +583,11 @@ def update_role():
     except Exception as e:
         print(f"Role Update Error: {e}")
         return "Failed to update user role", 500
-    
+
+
+
+
+
      
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
