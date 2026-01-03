@@ -37,6 +37,36 @@ function searchEvents() {
     displayEvents(filteredEvents, getExpandedEventIds());
 }
 
+// Helper to calculate the time remaining/past text to display
+function getTime(full, date, time) {
+    const eventDate = new Date(`${date}T${time}`);
+    const currentDate = new Date();
+    const difference = eventDate - currentDate;
+
+    const days = Math.floor(Math.abs(difference) / (1000 * 60 * 60 * 24));
+    const hours = Math.floor(
+        (Math.abs(difference) % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+    );
+    const displayedDays = days > 0 ? `${days}d ` : ``;
+    const displayedHours = days <= 0 && hours <= 0 ? `<0h` : `${hours}h`;
+
+    // Checks whether to display full (for details) or short (header) time remaining
+    // Then checks if the event is in the past (negative time) before deciding how to format
+    if (full) {
+        if (difference > 0) {
+            return `<b>In:</b> ${displayedDays}${displayedHours}`;
+        } else {
+            return `<b>Passed:</b> ${displayedDays}${displayedHours} ago`;
+        }
+    } else {
+        if (difference > 0) {
+            return `<i>(${displayedDays}${displayedHours})</i>`;
+        } else {
+            return `<i><b>passed</b></i>`;
+        }
+    }
+}
+
 // Renders the events to be displayed
 function displayEvents(events, expandedEventsIds = []) {
     const eventsSection = document.getElementById("events-list");
@@ -69,9 +99,10 @@ function displayEvents(events, expandedEventsIds = []) {
                         <div class="event-main">
                             <h3>${event.event_name}</h3>
                             <p><b>Host:</b> ${event.host_name}</p>
-                            <p><b>Date:</b> ${event.event_date}  <b>Time:</b> ${
+                            <p><b>Date:</b> ${event.event_date} ${
             event.event_time
         }</p>
+        <p>${getTime(false, event.event_date, event.event_time)}</p>
                             <span class="toggle-icon">▼</span>
                         </div>
                         
@@ -100,8 +131,14 @@ function displayEvents(events, expandedEventsIds = []) {
                                 </div>
 
                                 <div>
-                                    <p><b>Date:</b> ${event.event_date}</p>
-                                    <p><b>Time:</b> ${event.event_time}</p>
+                                    <p><b>Date:</b> ${event.event_date} ${
+            event.event_time
+        }</p>
+                                    <p>${getTime(
+                                        true,
+                                        event.event_date,
+                                        event.event_time
+                                    )}</p>
                                     <p><b>Location:</b> ${event.event_loc}</p>
                                 </div>
                             </div>
