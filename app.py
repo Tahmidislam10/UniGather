@@ -254,7 +254,7 @@ def book_event():
     if not user_id:
         return "You must be logged in to book events", 401
 
-    if role not in ["student", "staff"]:
+    if role not in ["student", "staff", "admin"]:
         return "Not allowed", 403
 
     data = request.get_json()
@@ -533,7 +533,7 @@ def admin_page():
     """Serves the admin portal only to users with the 'admin' role."""
     role = request.cookies.get("role")
     if role != "admin":
-        return redirect("/events-page")
+        return "Unauthorised", 403
     return render_template("admin.html")
 
 @app.get("/api/users")
@@ -541,7 +541,7 @@ def get_all_users():
     """Fetches all users for the admin dashboard."""
     role = request.cookies.get("role")
     if role != "admin":
-        return "Unauthorized", 403
+        return "Unauthorised", 403
 
     response = users_table.scan()
     items = response.get("Items", [])
@@ -561,7 +561,7 @@ def update_role():
     """Allows Admins to promote or demote users."""
     requester_role = request.cookies.get("role")
     if requester_role != "admin":
-        return "Unauthorized: Only Admins can modify roles", 403
+        return "Unauthorised: Only Admins can modify roles", 403
 
     data = request.get_json()
     target_user_id = data.get("userId")
