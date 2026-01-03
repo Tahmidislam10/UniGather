@@ -62,11 +62,8 @@ function checkPermission(event) {
     }
 }
 
-// Waits for the page to be fully loaded
-document.addEventListener("DOMContentLoaded", function () {
-    // Finds the create event button and adds a click event listener
-    const createButton = document.getElementById("create-event-button");
-    if (createButton) createButton.addEventListener("click", checkPermission);
+// Finds the create event button and adds a click event listener
+const createButton = document.getElementById("create-event-button");
+if (createButton) createButton.addEventListener("click", checkPermission);
 
-    getEvents(); // Loads events to populate the page
-});
+getEvents(); // Loads events to populate the page

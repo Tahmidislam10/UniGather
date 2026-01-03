@@ -1,6 +1,3 @@
-{% extends "base.html" %} {% block title %}Home - UniGather{% endblock %} {%
-block main %}
-<h2>Your Upcoming Events</h2>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -39,27 +36,21 @@ block main %}
         <main>
             <h2>Your Upcoming Events</h2>
 
-<section>
-    <form
-        class="search-events"
-        onsubmit="event.preventDefault(); searchEvents();"
-    >
-        <input
-            type="search"
-            id="search-input"
-            placeholder="Search for an event title..."
-        />
-        <button type="submit">Search</button>
-        <button type="button" onclick="getEvents()">Refresh</button>
-    </form>
-</section>
+            <section>
+                <form
+                    class="search-events"
+                    onsubmit="event.preventDefault(); searchEvents();"
+                >
+                    <input
+                        type="search"
+                        id="search-input"
+                        placeholder="Search for an event title..."
+                    />
+                    <button type="submit">Search</button>
+                    <button type="button" onclick="getEvents()">Refresh</button>
+                </form>
+            </section>
 
-<!-- EVENTS RENDER HERE -->
-<section id="events-list"></section>
-{% endblock %} {% block scripts %}
-<script src="/static/eventList.js"></script>
-<script src="/static/index.js"></script>
-{% endblock %}
             <!-- EVENTS RENDER HERE -->
             <section id="events-list"></section>
         </main>
