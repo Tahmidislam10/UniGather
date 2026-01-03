@@ -28,21 +28,16 @@ document.addEventListener("DOMContentLoaded", function () {
         if (loginButton) loginButton.style.display = "none";
         if (logoutButton) logoutButton.style.display = "block";
 
-        // Show admin button
-      
+        // Show role-specific buttons
         if (role === "admin") {
             if (adminButton) adminButton.style.display = "block";
-        } else {
-            if (adminButton) adminButton.style.display = "none";
-        }
-
-        // Show analytics button (staff + admin)
-        if (role === "staff" || role === "admin") {
+            if (analyticsButton) analyticsButton.style.display = "inline-block";
+        } else if (role === "staff") {
             if (analyticsButton) analyticsButton.style.display = "inline-block";
         } else {
+            if (adminButton) adminButton.style.display = "none";
             if (analyticsButton) analyticsButton.style.display = "none";
         }
-
     } else {
         if (userStatusDiv) userStatusDiv.style.display = "none"; // Hides User Status
 
