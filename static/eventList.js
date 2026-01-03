@@ -47,18 +47,20 @@ function getTime(full, date, time) {
     const hours = Math.floor(
         (Math.abs(difference) % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
     );
+    const displayedDays = days > 0 ? `${days}d ` : ``;
+    const displayedHours = days <= 0 && hours <= 0 ? `<0h` : `${hours}h`;
 
     // Checks whether to display full (for details) or short (header) time remaining
     // Then checks if the event is in the past (negative time) before deciding how to format
     if (full) {
         if (difference > 0) {
-            return `<b>In:</b> ${days}d ${hours}h`;
+            return `<b>In:</b> ${displayedDays}${displayedHours}`;
         } else {
-            return `<b>Passed:</b> ${days}d ${hours}h ago`;
+            return `<b>Passed:</b> ${displayedDays}${displayedHours} ago`;
         }
     } else {
         if (difference > 0) {
-            return `<i>(${days}d ${hours}h)</i>`;
+            return `<i>(${displayedDays}${displayedHours})</i>`;
         } else {
             return `<i><b>passed</b></i>`;
         }
