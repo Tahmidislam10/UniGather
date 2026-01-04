@@ -82,6 +82,14 @@ cd UniGather</code></pre>
 <p>The application will run locally at:<br>
 <a href="http://localhost:5000">http://localhost:5000</a></p>
 
+<h3>Accounts for Testing</h3>
+<ul>
+    <li><b>Student:</b> steven.student@city.ac.uk</li>
+    <li><b>Admin:</b> steven.admin@city.ac.uk</li>
+    <li><b>Staff:</b> steven.staff@city.ac.uk</li>
+</ul>
+<p><b>Shared Password:</b> StevenTestingPassword</p>
+
 <h2>Languages Used</h2>
 <ol>
     <li>Python</li>
