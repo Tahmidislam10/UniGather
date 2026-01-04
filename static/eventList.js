@@ -51,7 +51,7 @@ function getTime(full, date, time) {
         (Math.abs(difference) % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
     );
     const displayedDays = days > 0 ? `${days}d ` : ``; // Does not display if less than 1 day
-    const displayedHours = days <= 0 && hours <= 0 ? `<0h` : `${hours}h`;
+    const displayedHours = days <= 0 && hours <= 0 ? `<1h` : `${hours}h`;
 
     // Checks whether to display full (for details) or short (header) time remaining
     // Then checks if the event is in the past (negative time) before deciding how to format
