@@ -70,7 +70,8 @@
 <pre><code>git clone &lt;repository-url&gt;
 cd UniGather</code></pre>
 
-<h3>Create Python Virtual Environment</h3>
+<h3>Create and Run Python Virtual Environment</h3>
+<pre><code>py -m venv .venv</code></pre>
 <pre><code>.venv\Scripts\activate</code></pre>
 
 <h3>Install required dependencies</h3>
