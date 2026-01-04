@@ -13,13 +13,13 @@ def generate_booking_pdf(user, event):
     logo_path = "static/logoNormal.png"
     logo = ImageReader(logo_path)
     # Logo size & position (recommended)
-    logo_width = 100
-    logo_height = 100
+    logo_width = 245
+    logo_height = 150
 
     c.drawImage(
         logo,
         (width - logo_width) / 2,
-        height - 150,   # move it DOWN closer to title
+        height - 222,   # move it DOWN closer to title
         width=logo_width,
         height=logo_height,
         mask="auto"
