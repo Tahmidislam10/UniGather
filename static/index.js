@@ -1,3 +1,5 @@
+// This JavaScript is called in conjunction with eventList.js
+
 // Fetches the user's booked events from the backend
 async function getBookedEvents() {
     // Checks that the user is signed in for their events to be fetched
