@@ -58,8 +58,8 @@ function checkPermission(event) {
     const role = getCookie("role");
 
     if (role !== "staff" && role !== "admin") {
-        event.preventDefault(); // If not staff, prevents redirect to event creation page
-        alert("You must be logged in to create an event.");
+        event.preventDefault(); // If not staff or admin, prevents redirect to event creation page
+        alert("You must be logged as staff or admin to create an event.");
     }
 }
 
