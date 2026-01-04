@@ -12,6 +12,7 @@
 
     <body>
         <header class="header-nav">
+            <!-- Left side of the header -->
             <div class="nav-left">
                 <img
                     src="/static/logoWhite.png"
@@ -42,12 +43,16 @@
                 </nav>
             </div>
 
+            <!-- Right side of the header -->
             <div class="nav-right">
+                <!-- Text telling the user who they're signed in as -->
                 <div id="user-status" class="user-status">
                     Signed in as: <span id="username-text"></span>
                 </div>
 
+                <!-- Dynamic Buttons -->
                 <div class="nav-buttons nav-buttons-right">
+                    <!-- Only shown to admin users -->
                     <a
                         href="/admin"
                         id="admin-link"
@@ -55,10 +60,13 @@
                         style="display: none"
                         >Admin</a
                     >
+
+                    <!-- Only shown when logged in -->
                     <a href="/logout" id="nav-logout" style="display: none"
                         >Logout</a
                     >
 
+                    <!-- Shown when logged out -->
                     <a
                         href="/login"
                         id="nav-login"
@@ -76,8 +84,8 @@
             <h2>IN3046 Cloud Computing - Coursework Project</h2>
         </footer>
 
-        <!-- Script required on all pages. -->
-        <script src="/static/user.js"></script> 
+        <!-- User.js script is required on all pages -->
+        <script src="/static/user.js"></script>
         {% block scripts %}{% endblock %}
     </body>
 </html>

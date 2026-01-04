@@ -1,15 +1,14 @@
-{% extends "base.html" %}
-
-{% block title %}Analytics{% endblock %}
-
-{% block main %}
+{% extends "base.html" %} {% block title %}Analytics{% endblock %} {% block main
+%}
 <h1>Analytics Dashboard</h1>
 
-<div style="text-align:center; margin-bottom:20px;">
+<!-- Switch Between Weekly/Daily Stats -->
+<div style="text-align: center; margin-bottom: 20px">
     <button id="weeklyBtn">Weekly</button>
     <button id="dailyBtn">Daily</button>
 </div>
 
+<!-- Summary Stats -->
 <div class="stats-container">
     <div class="stat-card">
         <h3>Average Fill Rate</h3>
@@ -27,19 +26,16 @@
     </div>
 </div>
 
-
-
+<!-- Shows Event Analytics Chart -->
 <div class="chart-container">
     <canvas id="eventsChart"></canvas>
 </div>
 
+<!-- Shows Attendance Analytics Chart -->
 <div class="chart-container">
     <canvas id="attendeesChart"></canvas>
 </div>
-{% endblock %}
-
-{% block scripts %}
+{% endblock %} {% block scripts %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="/static/analytics.js"></script>
 {% endblock %}
-

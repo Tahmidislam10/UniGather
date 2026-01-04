@@ -10,6 +10,7 @@ block main %}
         Create event
     </a>
 
+    <!-- Search Bar -->
     <form
         class="search-events"
         onsubmit="event.preventDefault(); searchEvents(allEvents);"
@@ -20,12 +21,11 @@ block main %}
             placeholder="Search for an event title..."
         />
 
+        <!-- Type "Submit" allows ENTER key to also trigger search -->
         <button type="submit" class="button">Search</button>
-        <button
-            type="button"
-            class="button"
-            onclick="getEvents()"
-        >
+
+        <!-- Refreshes Events List -->
+        <button type="button" class="button" onclick="getEvents()">
             Refresh
         </button>
     </form>
