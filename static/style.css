@@ -318,7 +318,7 @@ ol {
 
 .event-main {
     display: grid;
-    grid-template-columns: minmax(0, 2fr) minmax(0, 1.2fr) max-content minmax(0, 0.3fr) auto;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1.2fr) max-content minmax(0, 0.35fr) auto;
     gap: 10px;
     white-space: nowrap;
     justify-content: space-between;
