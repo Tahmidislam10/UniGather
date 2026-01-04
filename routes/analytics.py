@@ -85,12 +85,13 @@ def analytics_daily():
 
     # Group events by day of the week
     for event in events:
-        created_at = event.get("created_at")
-        if not created_at:
-            continue
+        event_date = event.get("event_date")
+        if not event_date:
+                continue
 
-        dt = parser.parse(created_at)
+        dt = parser.parse(event_date)
         day = dt.strftime("%A")
+
 
         daily_events[day] += 1
         daily_attendees[day] += len(event.get("booked_users", []))

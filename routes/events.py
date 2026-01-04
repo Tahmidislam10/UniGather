@@ -157,18 +157,19 @@ def download_booking_confirmation(event_id):
 
 
 @events.post("/create/submit-event")
+#fuction is called when  the form is submitted
 def create_event():
-    # Creates a new event (staff/admin only)
-    user_id = request.cookies.get("user_id")
+    # identifes the current logged in user using cookies
+    user_id = request.cookies.get("user_id") 
 
-    # Check permission to create events
+  
     if not has_permission(user_id, ["staff", "admin"]):
-        return "Unauthorised: only staff and admins allowed.", 403
+        return "Unauthorised: only staff and admins allowed.", 403 
 
-    event_id = str(uuid.uuid4())
+    event_id = str(uuid.uuid4()) # generate a unqiue ID for event 
 
     try:
-        # Build event object from form data
+        # Build event object from form data from form 
         event = {
             "id": event_id,
             "host_name": request.form.get("host_name", "").strip(),
