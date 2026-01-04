@@ -9,7 +9,7 @@ resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.main.id
 }
 
-# --- Public Subnets (For ALB and NAT Gateway) ---
+# Public Subnets for ALB and NAT Gateway
 resource "aws_subnet" "public" {
   count                   = 2
   vpc_id                  = aws_vpc.main.id
@@ -19,7 +19,7 @@ resource "aws_subnet" "public" {
   tags = { Name = "g13-public-${count.index}" }
 }
 
-# --- Private Subnets (For ECS Tasks) ---
+# Private Subnets for ECS Tasks
 resource "aws_subnet" "private" {
   count                   = 2
   vpc_id                  = aws_vpc.main.id
@@ -29,7 +29,7 @@ resource "aws_subnet" "private" {
   tags = { Name = "g13-private-${count.index}" }
 }
 
-# --- NAT Gateway Setup ---
+# NAT Gateway Setup
 resource "aws_eip" "nat" {
   domain = "vpc"
 }
@@ -41,7 +41,7 @@ resource "aws_nat_gateway" "main" {
   tags          = { Name = "g13-nat-gateway" }
 }
 
-# --- Route Tables for Public Subnets ---
+# Route Tables for Public Subnets
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.main.id
   route {
@@ -56,7 +56,7 @@ resource "aws_route_table_association" "public" {
   route_table_id = aws_route_table.public.id
 }
 
-# --- Route Tables for Private Subnets (Points to NAT Gateway) ---
+# Route Tables for Private Subnets (Points to NAT Gateway)
 resource "aws_route_table" "private" {
   vpc_id = aws_vpc.main.id
   route {

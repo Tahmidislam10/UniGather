@@ -14,28 +14,28 @@ users_table = db.Table("users")
 
 @auth.post("/login")
 def login():
-    # 1. Get the plain text email and password from the form
+    # Gets the plain text email and password from the form
     email = request.form.get("email", "").strip().lower()
     password = request.form.get("password", "").strip()
 
-    # 2. Find the user in DynamoDB by their email
+    # Finds the user in DynamoDB via their provided email
     response = users_table.scan(
         FilterExpression=Attr("email").eq(email)
     )
     items = response.get("Items", [])
 
-    # 3. If no user found with that email
+    # Error if an invalid email is provided
     if not items:
         return "Invalid email or password", 401
 
     user = items[0]
     stored_hashed_password = user.get("password")
 
-    # 4. SECURITY CHECK
+    # Hashes the provided password and checks against the stored hashed password
     if not check_password_hash(stored_hashed_password, password):
         return "Invalid email or password", 401
 
-    # 5. Success: Set cookies and redirect
+    # If not returned by now, previous checks must have been successes
     display_name = user.get("full_name", user.get("username", "User"))
 
     response = make_response(redirect("/events-page"))
@@ -64,36 +64,36 @@ def logout():
 
 @auth.post("/register")
 def register():
-    # 1. Retrieve and clean form data
+    # Gets the plain text name, email and password from the form
     full_name = request.form.get("full_name", "").strip()
     email = request.form.get("email", "").strip().lower()
     password = request.form.get("password", "").strip()
 
-    # 2. Basic validation
+    # Basic validation to ensure all fields were provided
     if not full_name or not email or not password:
         return "All fields are required", 400
 
-    # 3. Academic email restriction (.ac.uk)
+    # Checks that the email address is an academic email (.ac.uk)
     if not email.endswith(".ac.uk"):
         return render_template(
             "register.html",
             error="Registration is restricted to ac.uk email addresses."
         ), 400
 
-    # 4. Check if the email is already in use
+    # Checks if the email is already in use
     existing_user = users_table.scan(
         FilterExpression=Attr("email").eq(email)
     )
     if existing_user.get("Items"):
         return "An account with this email already exists", 400
 
-    # 5. Security: Hash the password
+    # Hashes the password (do not store plain text passwords)
     hashed_password = generate_password_hash(
         password,
         method="pbkdf2:sha256"
     )
 
-    # 6. Prepare the user object
+    # Prepares the new user's entry
     new_user = {
         "id": str(uuid.uuid4()),
         "full_name": full_name,
@@ -103,7 +103,7 @@ def register():
         "booked_events": []
     }
 
-    # 7. Save to database
+    # Saves to database
     try:
         users_table.put_item(Item=new_user)
         return redirect("/login")

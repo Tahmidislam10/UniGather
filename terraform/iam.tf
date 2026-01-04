@@ -1,4 +1,4 @@
-# --- Execution Role (Used by ECS to pull images and send logs) ---
+# Execution Role - used by ECS to pull images and send logs
 resource "aws_iam_role" "ecs_exec" {
   name = "${var.app_name}-exec"
 
@@ -17,7 +17,7 @@ resource "aws_iam_role_policy_attachment" "ecs_exec_attach" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
-# --- Task Role (Used by your Flask code to talk to AWS services) ---
+# Task Role
 resource "aws_iam_role" "ecs_task" {
   name = "${var.app_name}-task"
 

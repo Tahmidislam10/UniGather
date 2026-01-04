@@ -1,9 +1,9 @@
-# --- ECS Cluster ---
+# ECS Cluster
 resource "aws_ecs_cluster" "main" {
   name = "g13-cluster"
 }
 
-# --- Security Groups ---
+# Security Groups
 resource "aws_security_group" "alb" {
   name   = "${var.app_name}-alb-sg"
   vpc_id = aws_vpc.main.id
@@ -51,7 +51,7 @@ resource "aws_security_group" "ecs_tasks" {
   }
 }
 
-# --- SSL Certificate (ACM) ---
+# SSL Certificate (ACM)
 resource "aws_acm_certificate" "app" {
   domain_name       = var.domain_name
   validation_method = "DNS"
@@ -61,7 +61,7 @@ resource "aws_acm_certificate" "app" {
   }
 }
 
-# --- Load Balancer ---
+# Load Balancer
 resource "aws_lb" "main" {
   name               = "${var.app_name}-alb"
   internal           = false
@@ -88,7 +88,7 @@ resource "aws_lb_target_group" "app" {
   }
 }
 
-# HTTP Listener: Automatic Redirect to HTTPS
+# HTTP Listener - Automatic Redirect to HTTPS
 resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.main.arn
   port              = "80"
@@ -105,7 +105,7 @@ resource "aws_lb_listener" "http" {
   }
 }
 
-# HTTPS Listener: Secure Forwarding
+# HTTPS Listener - Secure Forwarding
 resource "aws_lb_listener" "https" {
   load_balancer_arn = aws_lb.main.arn
   port              = "443"
@@ -119,7 +119,7 @@ resource "aws_lb_listener" "https" {
   }
 }
 
-# --- Task Definition ---
+# Task Definition
 resource "aws_ecs_task_definition" "app" {
   family                   = var.app_name
   cpu                      = "256"
@@ -159,7 +159,7 @@ resource "aws_ecs_task_definition" "app" {
   ])
 }
 
-# --- ECS Service ---
+# ECS Service
 resource "aws_ecs_service" "main" {
   name            = "${var.app_name}-service"
   cluster         = aws_ecs_cluster.main.id
@@ -187,15 +187,15 @@ resource "aws_ecs_service" "main" {
   }
 }
 
-# --- CloudWatch Log Group ---
+# CloudWatch Log Group 
 resource "aws_cloudwatch_log_group" "ecs" {
   name              = "/ecs/${var.app_name}"
   retention_in_days = 7
 }
 
-# --- AUTOSCALING RESOURCES ---
+# AUTOSCALING RESOURCES
 
-# 1. Define the Scalable Target (The "Floor" and "Ceiling")
+# Define the Scalable Target (The "Floor" and "Ceiling")
 resource "aws_appautoscaling_target" "ecs_target" {
   max_capacity       = 4
   min_capacity       = 1
@@ -204,7 +204,7 @@ resource "aws_appautoscaling_target" "ecs_target" {
   service_namespace  = "ecs"
 }
 
-# 2. Define the Scaling Policy (CPU Tracking)
+# Define the Scaling Policy (CPU Tracking)
 resource "aws_appautoscaling_policy" "ecs_policy_cpu" {
   name               = "cpu-autoscaling"
   policy_type        = "TargetTrackingScaling"

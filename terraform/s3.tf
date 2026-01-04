@@ -1,4 +1,4 @@
-# --- S3 Bucket for ALB Logs ---
+# S3 Bucket for ALB Logs
 resource "aws_s3_bucket" "lb_logs" {
   # Bucket names must be globally unique
   bucket        = "${var.app_name}-logs-${random_id.bucket_suffix.hex}"
@@ -10,7 +10,7 @@ resource "aws_s3_bucket" "lb_logs" {
   }
 }
 
-# --- Lifecycle Rule (Free Tier Safety) ---
+# Lifecycle Rule (Free Tier Safety)
 resource "aws_s3_bucket_lifecycle_configuration" "lb_logs_lifecycle" {
   bucket = aws_s3_bucket.lb_logs.id
 
@@ -24,7 +24,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "lb_logs_lifecycle" {
   }
 }
 
-# --- Encryption (Required for ALB Logs) ---
+# Encryption required for ALB Logs
 resource "aws_s3_bucket_server_side_encryption_configuration" "lb_logs_encryption" {
   bucket = aws_s3_bucket.lb_logs.id
 
@@ -35,7 +35,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "lb_logs_encryptio
   }
 }
 
-# --- Bucket Policy (Allows ALB to write logs) ---
+# Bucket Policy to allow ALB to write logs
 resource "aws_s3_bucket_policy" "lb_logs_policy" {
   bucket = aws_s3_bucket.lb_logs.id
   policy = jsonencode({
