@@ -76,7 +76,7 @@ ol {
 }
 
 .nav-buttons a {
-    color: white;
+    color: #ffffff;
     text-decoration: none;
     font-weight: 600;
     margin-right: 10px;
@@ -130,7 +130,7 @@ ol {
 }
 
 .login-card {
-    background: white;
+    background: #ffffff;
     padding: 40px;
     border-radius: 12px;
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
@@ -301,7 +301,7 @@ ol {
 
 .event-item button {
     background: #d61726;
-    color: white;
+    color: #ffffff;
     border: none;
     padding: 6px;
     margin-top: 10px;
