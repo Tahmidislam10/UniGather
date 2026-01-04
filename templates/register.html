@@ -9,6 +9,7 @@ block main %}
         />
         <h2>Create an Account</h2>
 
+        <!-- Handles error from backend -->
         {% if error %}
         <p style="color: red; text-align: center">{{ error }}</p>
         {% endif %}
@@ -43,6 +44,7 @@ block main %}
                 <input type="password" name="password" required />
             </div>
 
+            <!-- For displaying error message for failed email validation -->
             <p
                 id="error-msg"
                 style="color: red; text-align: center; display: none"
