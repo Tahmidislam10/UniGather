@@ -134,7 +134,6 @@ Docker and Deployment (ECR to ECS)
 Local Docker Build
 
 docker build -t unigather .
-docker run -p 5000:5000 unigather
 
 Push to Amazon ECR
 
