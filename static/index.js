@@ -17,8 +17,10 @@ async function getBookedEvents() {
     }
 }
 
-// Empty function - should never be called
-async function makeBooking(eventId) {}
+// Should never be called - here to catch any errors
+async function makeBooking() {
+    alert("Error");
+}
 
 // Calls the backend to cancel the booking for an event
 async function cancelBooking(eventId) {

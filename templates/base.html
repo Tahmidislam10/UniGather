@@ -1,3 +1,6 @@
+<!-- Using Jinja2, this file is a base template for all other pages.  -->
+<!-- Any edits made here will be replicated across other pages using this.  -->
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -73,7 +76,8 @@
             <h2>IN3046 Cloud Computing - Coursework Project</h2>
         </footer>
 
-        <script src="/static/user.js"></script>
+        <!-- Script required on all pages. -->
+        <script src="/static/user.js"></script> 
         {% block scripts %}{% endblock %}
     </body>
 </html>

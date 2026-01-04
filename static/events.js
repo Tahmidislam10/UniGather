@@ -1,3 +1,5 @@
+// This JavaScript is called in conjunction with eventList.js
+
 // Fetches an updated events list from the backend
 async function getEvents() {
     try {
