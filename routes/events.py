@@ -20,9 +20,6 @@ def get_all_events():
     response = events_table.scan()
     items = response.get("Items", [])
 
-    # Sort events newest first
-    items.sort(key=lambda x: x.get("created_at", ""), reverse=True)
-
     # Ensure DynamoDB sets are converted to lists for frontend compatibility
     for item in items:
         if "booked_users" not in item or not isinstance(item["booked_users"], list):
@@ -38,6 +35,14 @@ def get_all_events():
                 if isinstance(item.get("waitlist_users"), set)
                 else []
             )
+
+    # Sorts events by earliest to furthest but sorts past events to the very bottom
+    items.sort(
+        key=lambda e: (
+        (f"{e.get('event_date', '')} {e.get('event_time', '')}" < datetime.now().strftime("%Y-%m-%d %H:%M")),
+        f"{e.get('event_date', '')} {e.get('event_time', '')}"
+        )
+    )
 
     return jsonify(items), 200
 
@@ -98,9 +103,12 @@ def get_reminders():
             event["booked_users"] = list(event.get("booked_users", []))
             reminders.append(event)
 
-    # Sort reminders by date and time
+    # Sorts events by earliest to furthest but sorts past events to the very bottom
     reminders.sort(
-        key=lambda e: f"{e.get('event_date', '')} {e.get('event_time', '')}"
+        key=lambda e: (
+        (f"{e.get('event_date', '')} {e.get('event_time', '')}" < datetime.now().strftime("%Y-%m-%d %H:%M")),
+        f"{e.get('event_date', '')} {e.get('event_time', '')}"
+        )
     )
 
     return jsonify(reminders), 200
