@@ -1,8 +1,8 @@
 // Fetches the requested cookie
 function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(";").shift();
+    const value = `; ${document.cookie}`; // Normalises the format
+    const parts = value.split(`; ${name}=`); // Splits the cookie
+    if (parts.length === 2) return parts.pop().split(";").shift(); // Keeps desired data
     return null;
 }
 

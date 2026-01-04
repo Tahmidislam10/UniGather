@@ -1,10 +1,13 @@
+// This JavaScript file is not used solo, but is called with events.js or index.js.
+
 let allEvents = []; // All events that could be displayed
 
 // Fetches the requested cookie
 function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(";").shift();
+    const value = `; ${document.cookie}`; // Normalises the format
+    const parts = value.split(`; ${name}=`); // Splits the cookie
+    if (parts.length === 2) return parts.pop().split(";").shift(); // Keeps desired data
+    return null;
 }
 
 // Returns the event IDs of events currently expanded by the user
@@ -47,7 +50,7 @@ function getTime(full, date, time) {
     const hours = Math.floor(
         (Math.abs(difference) % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
     );
-    const displayedDays = days > 0 ? `${days}d ` : ``;
+    const displayedDays = days > 0 ? `${days}d ` : ``; // Does not display if less than 1 day
     const displayedHours = days <= 0 && hours <= 0 ? `<0h` : `${hours}h`;
 
     // Checks whether to display full (for details) or short (header) time remaining
@@ -89,10 +92,7 @@ function displayEvents(events, expandedEventsIds = []) {
         const wasExpanded = expandedEventsIds.includes(event.id); // Checks if event was previously expanded by the user
         const eventDiv = document.createElement("div");
 
-        eventDiv.className = wasExpanded
-            ? "event-item event-card toggled"
-            : "event-item event-card";
-// Expands if previously expanded
+        eventDiv.className = wasExpanded ? "event-item toggled" : "event-item"; // Expands if previously expanded
         eventDiv.setAttribute("data-eventId", event.id); // Stores event ID for future use
 
         // Writes the HTML. NOTE: HTML comments below do not appear as green within VSCode

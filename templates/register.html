@@ -1,17 +1,24 @@
-{% extends "base.html" %}
-{% block title %}Register - UniGather{% endblock %}
-
-{% block main %}
+{% extends "base.html" %} {% block title %}Register - UniGather{% endblock %} {%
+block main %}
 <section class="login-container">
     <div class="login-card">
-        <img src="/static/logo.png" alt="UniGather Logo" class="login-logo" />
+        <img
+            src="/static/logoNormal.png"
+            alt="UniGather Logo"
+            class="login-logo"
+        />
         <h2>Create an Account</h2>
 
+        <!-- Handles error from backend -->
         {% if error %}
-        <p style="color:red; text-align:center;">{{ error }}</p>
+        <p style="color: red; text-align: center">{{ error }}</p>
         {% endif %}
 
-        <form action="/register" method="POST" onsubmit="return validateEmail()">
+        <form
+            action="/register"
+            method="POST"
+            onsubmit="return validateEmail()"
+        >
             <div class="form-field-normal">
                 <label>Full Name</label>
                 <input
@@ -37,15 +44,18 @@
                 <input type="password" name="password" required />
             </div>
 
-            <p id="error-msg" style="color:red; text-align:center; display:none;"></p>
+            <!-- For displaying error message for failed email validation -->
+            <p
+                id="error-msg"
+                style="color: red; text-align: center; display: none"
+            ></p>
 
             <div class="form-actions">
-                <button type="submit" class="button">
-                    Register
-                </button>
+                <button type="submit" class="button">Register</button>
             </div>
         </form>
 
+        <!-- Named register-link-section for css but actually takes you back to login -->
         <div class="register-link-section">
             <p>Already have an account?</p>
             <a
@@ -57,22 +67,6 @@
         </div>
     </div>
 </section>
-{% endblock %}
-
-{% block scripts %}
-<script>
-function validateEmail() {
-    const email = document.querySelector('input[name="email"]').value;
-    const error = document.getElementById("error-msg");
-
-    if (!email.endsWith(".ac.uk")) {
-        error.innerText = "Registration is restricted to academic (.ac.uk) email addresses.";
-        error.style.display = "block";
-        return false;
-    }
-
-    error.style.display = "none";
-    return true;
-}
-</script>
+{% endblock %} {% block scripts %}
+<script src="/static/register.js"></script>
 {% endblock %}

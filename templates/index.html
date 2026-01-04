@@ -3,6 +3,7 @@ block main %}
 <h2>Your Upcoming Events</h2>
 
 <section>
+    <!-- Search Bar -->
     <form
         class="search-events"
         onsubmit="event.preventDefault(); searchEvents();"
@@ -12,11 +13,15 @@ block main %}
             id="search-input"
             placeholder="Search for an event title..."
         />
-        <button type="submit" class="button">Search</button>
-        <button type="button" class="button" onclick="getBookedEvents()">Refresh</button>
-    </form>
 
-    
+        <!-- Type "Submit" allows ENTER key to also trigger search -->
+        <button type="submit" class="button">Search</button>
+
+        <!-- Refreshes Events List -->
+        <button type="button" class="button" onclick="getBookedEvents()">
+            Refresh
+        </button>
+    </form>
 </section>
 
 <!-- EVENTS RENDER HERE -->

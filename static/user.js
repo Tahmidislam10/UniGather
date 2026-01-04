@@ -1,8 +1,8 @@
 // Fetches the requested cookie
 function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(";").shift();
+    const value = `; ${document.cookie}`; // Normalises the format
+    const parts = value.split(`; ${name}=`); // Splits the cookie
+    if (parts.length === 2) return parts.pop().split(";").shift(); // Keeps desired data
     return null;
 }
 
@@ -20,7 +20,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Check if user is logged in
     if (username && username !== "") {
-        // Show welcome message and set name
+        // The if statements below check that the element was found before attempting changes
+
+        // Show welcome message and sets name
         if (userStatusDiv) userStatusDiv.style.display = "block";
         if (usernameText) usernameText.innerText = decodeURIComponent(username);
 
@@ -30,11 +32,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Show role-specific buttons
         if (role === "admin") {
+            // Admin can see both buttons
             if (adminButton) adminButton.style.display = "block";
             if (analyticsButton) analyticsButton.style.display = "inline-block";
         } else if (role === "staff") {
+            // Only staff, only displays analytics button
+            if (adminButton) adminButton.style.display = "none";
             if (analyticsButton) analyticsButton.style.display = "inline-block";
         } else {
+            // Not staff or admin, so both buttons hidden
             if (adminButton) adminButton.style.display = "none";
             if (analyticsButton) analyticsButton.style.display = "none";
         }
